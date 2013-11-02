@@ -1,6 +1,6 @@
 <?php  
 
-use Codesleeve\FixtureL4\Fixture;
+use Codesleeve\Fixture\Fixture;
 use \Mockery as m;
 
 class FixtureTest extends PHPUnit_Framework_TestCase
@@ -19,12 +19,12 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 	 * Test that the up method thows an invalid fixture location exception
 	 * for fixture locations that don't exist.
 	 *
-	 * @expectedException Codesleeve\FixtureL4\Exceptions\InvalidFixtureLocationException
+	 * @expectedException Codesleeve\Fixture\Exceptions\InvalidFixtureLocationException
 	 * @return void
 	 */
 	public function testUpThrowsAnException()
 	{
-	    $mockedRepository = m::mock('Codesleeve\FixtureL4\Repositories\IlluminateDatabaseRepository');
+	    $mockedRepository = m::mock('Codesleeve\Fixture\Repositories\IlluminateDatabaseRepository');
 
 		$fixture = Fixture::getInstance();
 		$fixture->setRepository($mockedRepository);
@@ -39,7 +39,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testUpPopulatesAllFixtures()
 	{
-		$mockedRepository = m::mock('Codesleeve\FixtureL4\Repositories\IlluminateDatabaseRepository');
+		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\IlluminateDatabaseRepository');
 		$mockedRepository->shouldReceive('buildRecords')
 			->once()
 			->with('users', ['Travis' => ['first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root']])
@@ -73,7 +73,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testUpPopulatesSomeFixtures()
 	{
-		$mockedRepository = m::mock('Codesleeve\FixtureL4\Repositories\IlluminateDatabaseRepository');
+		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\IlluminateDatabaseRepository');
 		$mockedRepository->shouldReceive('buildRecords')
 			->once()
 			->with('users', ['Travis' => ['first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root']])

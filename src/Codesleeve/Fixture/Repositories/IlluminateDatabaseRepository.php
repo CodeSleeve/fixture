@@ -1,4 +1,4 @@
-<?php namespace Codesleeve\FixtureL4\Repositories;
+<?php namespace Codesleeve\Fixture\Repositories;
 
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

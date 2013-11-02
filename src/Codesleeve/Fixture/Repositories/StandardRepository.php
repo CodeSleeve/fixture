@@ -1,4 +1,4 @@
-<?php namespace Codesleeve\FixtureL4\Repositories;
+<?php namespace Codesleeve\Fixture\Repositories;
 
 class StandardRepository extends Repository implements RepositoryInterface
 {

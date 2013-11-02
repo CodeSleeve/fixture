@@ -1,4 +1,4 @@
-<?php namespace Codesleeve\FixtureL4;
+<?php namespace Codesleeve\Fixture;
 
 class Fixture extends Singleton
 {

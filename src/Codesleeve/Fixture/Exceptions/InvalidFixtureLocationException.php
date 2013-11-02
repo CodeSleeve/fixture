@@ -1,4 +1,4 @@
-<?php namespace Codesleeve\FixtureL4\Exceptions;
+<?php namespace Codesleeve\Fixture\Exceptions;
 
 use Exception;
 
