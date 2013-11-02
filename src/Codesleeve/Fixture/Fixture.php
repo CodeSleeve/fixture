@@ -21,7 +21,7 @@ class Fixture extends Singleton
      * 
      * @var Array
      */
-    protected $config = ['location' => ''];
+    protected $config = array('location' => '');
 
 	/**
 	 * Build fixtures.

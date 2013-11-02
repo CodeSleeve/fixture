@@ -19,7 +19,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * 
 	 * @var array
 	 */
-	protected $tables = [];
+	protected $tables = array();
 
     /**
      * An instance of Laravel's Str class.
@@ -49,7 +49,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 */
 	public function buildRecords($tableName, $records)
 	{
-		$insertedRecords = [];
+		$insertedRecords = array();
 		$this->tables[$tableName] = $tableName;
 
 		foreach ($records as $recordName => $recordValues)
@@ -97,7 +97,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 			$this->db->table($table)->truncate();
 		}
 
-		$this->tables = [];
+		$this->tables = array();
 	}
 
 	/**
@@ -163,7 +163,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 		foreach ($relatedRecords as $relatedRecord) 
 		{
 			$otherKeyValue = $this->generateKey($relatedRecord);
-			$this->db->table($joinTable)->insert([$foreignKeyName => $foreignKeyValue, $otherKeyName => $otherKeyValue]);
+			$this->db->table($joinTable)->insert(array($foreignKeyName => $foreignKeyValue, $otherKeyName => $otherKeyValue));
 		}
 	}
 

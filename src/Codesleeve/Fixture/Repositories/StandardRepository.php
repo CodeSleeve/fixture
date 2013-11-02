@@ -14,7 +14,7 @@ class StandardRepository extends Repository implements RepositoryInterface
 	 * 
 	 * @var array
 	 */
-	protected $tables = [];
+	protected $tables = array();
 
 	/**
 	 * Constructor method
@@ -36,7 +36,7 @@ class StandardRepository extends Repository implements RepositoryInterface
 	 */
 	public function buildRecords($tableName, $records)
 	{
-		$insertedRecords = [];
+		$insertedRecords = array();
 		$this->tables[$tableName] = $tableName;
 
 		foreach ($records as $recordName => $recordValues) 
@@ -71,7 +71,7 @@ class StandardRepository extends Repository implements RepositoryInterface
 			$this->db->query("TRUNCATE TABLE $table");
 		}
 
-		$this->tables = [];
+		$this->tables = array();
 	}
 
 	/**
