@@ -42,22 +42,22 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\StandardRepository');
 		$mockedRepository->shouldReceive('buildRecords')
 			->once()
-			->with('users', ['Travis' => ['first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root']])
+			->with('users', array('Travis' => array('first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root')))
 			->andReturn('foo');
 
 		$mockedRepository->shouldReceive('buildRecords')
 			->once()
-			->with('games', ['Diablo3' => ['title' => 'Diablo 3', 'user' => 'Travis']])
+			->with('games', array('Diablo3' => array('title' => 'Diablo 3', 'user' => 'Travis')))
 			->andReturn('bar');
 
 		$mockedRepository->shouldReceive('buildRecords')
 			->once()
-			->with('roles', ['root' => ['name' => 'root']])
+			->with('roles', array('root' => array('name' => 'root')))
 			->andReturn('baz');
 
 		$fixture = Fixture::getInstance();
 		$fixture->setRepository($mockedRepository);
-		$fixture->setConfig(['location' => dirname(__FILE__) . '/fixtures']);
+		$fixture->setConfig(array('location' => dirname(__FILE__) . '/fixtures'));
 		$fixture->up();
 
 		$this->assertEquals('foo', $fixture->users());
@@ -76,21 +76,21 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\StandardRepository');
 		$mockedRepository->shouldReceive('buildRecords')
 			->once()
-			->with('users', ['Travis' => ['first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root']])
+			->with('users', array('Travis' => array('first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root')))
 			->andReturn('foo');
 
 		$mockedRepository->shouldReceive('buildRecords')
 			->never()
-			->with('games', ['Diablo3' => ['title' => 'Diablo 3', 'user' => 'Travis']]);
+			->with('games', array('Diablo3' => array('title' => 'Diablo 3', 'user' => 'Travis')));
 
 		$mockedRepository->shouldReceive('buildRecords')
 			->never()
-			->with('roles', ['root' => ['name' => 'root']]);
+			->with('roles', array('root' => array('name' => 'root')));
 
 		$fixture = Fixture::getInstance();
 		$fixture->setRepository($mockedRepository);
-		$fixture->setConfig(['location' => dirname(__FILE__) . '/fixtures']);
-		$fixture->up(['users']);
+		$fixture->setConfig(array('location' => dirname(__FILE__) . '/fixtures'));
+		$fixture->up(array('users'));
 
 		$this->assertEquals('foo', $fixture->users());
 	}
