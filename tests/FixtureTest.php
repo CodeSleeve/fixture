@@ -24,7 +24,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testUpThrowsAnException()
 	{
-	    $mockedRepository = m::mock('Codesleeve\Fixture\Repositories\IlluminateDatabaseRepository');
+	    $mockedRepository = m::mock('Codesleeve\Fixture\Repositories\StandardRepository');
 
 		$fixture = Fixture::getInstance();
 		$fixture->setRepository($mockedRepository);
@@ -39,7 +39,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testUpPopulatesAllFixtures()
 	{
-		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\IlluminateDatabaseRepository');
+		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\StandardRepository');
 		$mockedRepository->shouldReceive('buildRecords')
 			->once()
 			->with('users', ['Travis' => ['first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root']])
@@ -73,7 +73,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testUpPopulatesSomeFixtures()
 	{
-		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\IlluminateDatabaseRepository');
+		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\StandardRepository');
 		$mockedRepository->shouldReceive('buildRecords')
 			->once()
 			->with('users', ['Travis' => ['first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root']])
