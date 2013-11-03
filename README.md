@@ -5,7 +5,7 @@ A framework agnostic, simple (yet elegant) fixture library for php.
 * php >= 5.3.
 * A PDO object instance for database connections.
 * Database table primary keys should have a column name of 'id'.
-* Database table foreign keys should be composed of the singularized name of the associated table along with an appended '_id' suffix (e.g blog_id would be the foreign key name for a table named blogs).
+* Database table foreign keys should be composed of the singularized name of the associated table along with an appended '\_id' suffix (e.g blog_id would be the foreign key name for a table named blogs).
 
 ## Installation
 Fixture is distributed as a composer package, which is how it should be used in your app.
@@ -35,7 +35,7 @@ in tests/fixtures/soul_reapers.php
 	);
 ```
 
-Here we're simple returning an nested array containing our fixture data.  Notice that there are two fixtures and that they each have a unique name (this is very important as you'll see shortly we can easily reference loaded fixture data from within our tests).  Now, we can't have soul reapers without zanpakutos, so let's assume we've also got a fictional zanpakutos table that we need to seed some data into.  We'll create the following fixture:
+Here we're simple returning a nested array containing our fixture data.  Notice that there are two fixtures and that they each have a unique name (this is very important as you'll see shortly we can easily reference loaded fixture data from within our tests).  Now, we can't have soul reapers without zanpakutos, so let's assume we've also got a fictional zanpakutos table that we need to seed some data into.  We'll create the following fixture:
 
 in tests/fixtures/zanpakutos.php
 ```php
@@ -50,3 +50,5 @@ in tests/fixtures/zanpakutos.php
 		)
 	);
 ```
+
+Because a zanpakuto must belong to a soul reaper (it's part of their soul after all) we know that our zanpakutos table will contain a column named 'soul\_reaper\_id'.  In order to tie a zanpakuto to it's owner, we can simply set this foreign key to the name of the corresponding soul reaper it belongs to.  There's no need to worry about specific id's, insertion order, etc.  It's pretty simple.  
