@@ -18,7 +18,10 @@ Install the package using Composer.  Edit your project's `composer.json` file to
   }
 ```
 
-## Quickstart
+## Overview
+In order to create good tests for database specific application logic, it's often necessary to seed a test database with dummy data before tests are ran.  This package allows you to achieve this through the use of database fixtures (fixtures are just another way of saying 'test data').  Fixtures can be created using native php array syntax; You'll typically create one fixture for each table in your database that you wish to seed. 
+
+## Example
 ### Step 1 - Fixture setup
 Inside your application test folder, create a folder named fixtures.  Next, create a couple of fixture files inside this folder.  Fixture files are written using native php array syntax.  To create one, simply create a new file named after the table that the fixture corresponds to and have it return an array of data.  As an example of this, let's create some fixture data for a hypothetical 'soul_reapers' table (bear with me, I'm a huge Bleach fan):
 
@@ -153,3 +156,6 @@ What's going on here?  A few things:
 * We're invoking the up() method on the fixture object.  This method seeds the database and caches the inserted records as php standard objects on the fixture object.
 	* Invoking the up method with no params will seed all fixtures.
 	* Invoking the up method with an array of fixture names will seed only those fixtures (e.g $this->fixture->up(['soul_reapers']) would seed the soul_reapers table only).
+* In the tearDown method we're invoking the down() method.  This method will truncate all tables that have had fixture data inserted into them.
+
+By using fixtures to seed our test database we've gained very precise control over what's in our database at any given time during a test.  This in turn allows us to very easily test the pieces of our application that contain database specific logic.
