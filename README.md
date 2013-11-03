@@ -145,11 +145,11 @@ in tests/exampleTest.php
 
 What's going on here?  A few things:
 * We're creating an instance of 'Codesleeve\Fixture\Repositories\StandardRepository' and caching it as a property on the test class.
-** This is the most basic repository avaialble for this package.  It requires no ORM and has no concept of relationships.
-** In order to create a new repository we first need to instantiate a PDO database connection object and pass it as a parameter to the StandardRepository constructor.
+	* This is the most basic repository avaialble for this package.  It requires no ORM and has no concept of relationships.
+	* In order to create a new repository we first need to instantiate a PDO database connection object and pass it as a parameter to the StandardRepository constructor.
 * We're creating a new instance of fixture via the getInstance() method (this is a singleton pattern).
 * We're injecting the stnadardRepository object into the fixture instance via the setRepository() method.
 * We're injecting in a configuration array with a location parameter that contains the file system location of the folder we want to load our fixtures from.
 * We're invoking the up() method on the fixture object.  This method seeds the database and caches the inserted records as php standard objects on the fixture object.
-** Invoking the up method with no params will seed all fixtures.
-** Invoking the up method with an array of fixture names will seed only those fixtures (e.g $this->fixture->up(['soul_reapers']) would seed the soul_reapers table only).
+	* Invoking the up method with no params will seed all fixtures.
+	* Invoking the up method with an array of fixture names will seed only those fixtures (e.g $this->fixture->up(['soul_reapers']) would seed the soul_reapers table only).
