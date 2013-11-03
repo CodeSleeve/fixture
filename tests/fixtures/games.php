@@ -1,8 +1,8 @@
 <?php
 
-return [
-	'Diablo3' => [
+return array (
+	'Diablo3' => array (
 		'title' => 'Diablo 3',
 		'user'	=> 'Travis'
-	]
-];
+	)
+);
