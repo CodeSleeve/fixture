@@ -1,6 +1,8 @@
 {
     "name": "codesleeve/fixture",
-    "description": "",
+    "description": "A framework agnostic, simple (yet elegant) fixture library for php.",
+    "keywords": ["fixture", "test", "testing", "database"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Travis Bennett",
