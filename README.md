@@ -19,7 +19,7 @@ Install the package using Composer.  Edit your project's `composer.json` file to
 ```
 
 ## Overview
-In order to create good tests for database specific application logic, it's often necessary to seed a test database with dummy data before tests are ran.  This package allows you to achieve this through the use of database fixtures (fixtures are just another way of saying 'test data').  Fixtures can be created using native php array syntax and not dependendent on any specific relational DBMS.  You'll typically create one fixture for each table in your database that you wish to seed. 
+In order to create good tests for database specific application logic, it's often necessary to seed a test database with dummy data before tests are ran.  This package allows you to achieve this through the use of database fixtures (fixtures are just another way of saying 'test data').  Fixtures can be created using native php array syntax and are not dependendent on any specific relational DBMS.  You'll typically create one fixture for each table in your database that you wish to seed. 
 
 ## Example
 ### Step 1 - Fixture setup
@@ -128,7 +128,7 @@ in tests/exampleTest.php
 			{
 				if (!$this->repository) 
 				{
-					$pdo = new pdo();
+					$pdo = new PDO('mysql:dbname=testdb;host=127.0.0.1', 'dbuser', 'dbpass');
 					$this->repository =  new StandardRepository($pdo);
 				}
 
