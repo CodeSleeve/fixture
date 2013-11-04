@@ -158,4 +158,10 @@ What's going on here?  A few things:
 	* Invoking the up method with an array of fixture names will seed only those fixtures (e.g $this->fixture->up(['soul_reapers']) would seed the soul_reapers table only).
 * In the tearDown method we're invoking the down() method.  This method will truncate all tables that have had fixture data inserted into them.
 
-By using fixtures to seed our test database we've gained very precise control over what's in our database at any given time during a test.  This in turn allows us to very easily test the pieces of our application that contain database specific logic.
+As an aded benefit, seeded database records can be accessed (if needed) as objects directly from the fixture object itself:
+```php
+// Returns 'Kurosaki'
+echo $this->fixture->soul_reapers('Ichigo')->last_name;
+```
+
+By using fixtures to seed our test database we've gained very precise control over what's in our database at any given time during a test.  This in turn allows us to very easily test the pieces of our application that contain database specific logic.  
