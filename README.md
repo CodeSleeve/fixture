@@ -155,7 +155,7 @@ What's going on here?  A few things:
 * We're injecting in a configuration array with a location parameter that contains the file system location of the folder we want to load our fixtures from.
 * We're invoking the up() method on the fixture object.  This method seeds the database and caches the inserted records as php standard objects on the fixture object.
 	* Invoking the up method with no params will seed all fixtures.
-	* Invoking the up method with an array of fixture names will seed only those fixtures (e.g $this->fixture->up(['soul_reapers']) would seed the soul_reapers table only).
+	* Invoking the up method with an array of fixture names will seed only those fixtures (e.g $this->fixture->up(array('soul_reapers')) would seed the soul_reapers table only).
 * In the tearDown method we're invoking the down() method.  This method will truncate all tables that have had fixture data inserted into them.
 
 As an aded benefit, seeded database records can be accessed (if needed) as objects directly from the fixture object itself:
