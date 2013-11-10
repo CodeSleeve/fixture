@@ -2,7 +2,7 @@
 A framework agnostic, simple (yet elegant) fixture library for php.
 
 ## Requirements
-* php >= 5.3.
+* php >= 5.3
 * A PDO object instance for database connections.
 * Database table primary keys should have a column name of 'id'.
 * Database table foreign keys should be composed of the singularized name of the associated table along with an appended '\_id' suffix (e.g blog_id would be the foreign key name for a table named blogs).
