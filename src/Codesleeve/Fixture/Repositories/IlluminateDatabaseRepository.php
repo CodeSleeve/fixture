@@ -151,7 +151,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * @param  int $columnValue
 	 * @return void
 	 */
-	public function insertBelongsToMany($recordName, $relation, $columnValue)
+	protected function insertBelongsToMany($recordName, $relation, $columnValue)
 	{
 		$joinTable = $relation->getTable();
 		$this->tables[] = $joinTable;
