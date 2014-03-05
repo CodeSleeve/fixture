@@ -12,7 +12,7 @@ class Singleton
     public static function getInstance()
     {
         static $instance = null;
-        
+
         if (null === $instance) {
             $instance = new static();
         }
@@ -28,7 +28,7 @@ class Singleton
      */
     protected function __construct()
     {
-        
+
     }
 
     /**

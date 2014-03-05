@@ -9,21 +9,21 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 {
 	/**
      * An instance of Laravel's DatabaseManager class.
-     * 
+     *
      * @var DatabaseManager
      */
     protected $db;
 
     /**
 	 * An array of tables that have had fixture data loaded into them.
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $tables = array();
 
     /**
      * An instance of Laravel's Str class.
-     * 
+     *
      * @var Str
      */
     protected $str;
@@ -31,7 +31,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	/**
 	 * Constructor method
 	 *
-	 * @param  DatabaseManager $db 
+	 * @param  DatabaseManager $db
 	 * @param  Str $str
 	 */
 	public function __construct(DatabaseManager $db, Str $str)
@@ -44,8 +44,8 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * Build a fixture record using the passed in values.
 	 *
 	 * @param  string $tableName
-	 * @param  array $records   
-	 * @return Model             
+	 * @param  array $records
+	 * @return Model
 	 */
 	public function buildRecords($tableName, $records)
 	{
@@ -57,12 +57,12 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 			$model = $this->generateModelName($tableName);
 			$record = new $model;
 
-			foreach ($recordValues as $columnName => $columnValue) 
+			foreach ($recordValues as $columnName => $columnValue)
 			{
 				$camelKey = camel_case($columnName);
 
 				// If a column name exists as a method on the model, we will just assume
-			    // it is a relationship and we'll generate the primary key for it and store 
+			    // it is a relationship and we'll generate the primary key for it and store
 				// it as a foreign key on the model.
 				if (method_exists($record, $camelKey))
 				{
@@ -70,14 +70,14 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 
 					continue;
 				}
-				
+
 				$record->$columnName = $columnValue;
 			}
 
-			// Generate a hash for this record's primary key.  We'll simply hash the name of the 
+			// Generate a hash for this record's primary key.  We'll simply hash the name of the
 			// fixture into an integer value so that related fixtures don't have to rely on
 			// an auto-incremented primary key when creating foreign keys.
-			$primaryKeyName = $record->getKeyName(); 
+			$primaryKeyName = $record->getKeyName();
 			$record->$primaryKeyName = $this->generateKey($recordName);
 			$record->save();
 			$insertedRecords[$recordName] = $record;
@@ -88,8 +88,8 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 
 	/**
 	 * Truncate a table.
-	 * 
-	 * @return void           
+	 *
+	 * @return void
 	 */
 	public function truncate()
 	{
@@ -104,23 +104,23 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * Insert related records for a fixture.
 	 *
 	 * @param  string $recordName
-	 * @param  Model $record      
-	 * @param  string $camelKey    
-	 * @param  string $columnValue 
-	 * @return void              
+	 * @param  Model $record
+	 * @param  string $camelKey
+	 * @param  string $columnValue
+	 * @return void
 	 */
 	protected function insertRelatedRecords($recordName, $record, $camelKey, $columnValue)
 	{
 		$relation = $record->$camelKey();
-		
-		if ($relation instanceof BelongsTo) 
+
+		if ($relation instanceof BelongsTo)
 		{
 			$this->insertBelongsTo($record, $relation, $columnValue);
 
 			return;
 		}
 
-		if ($relation instanceof BelongsToMany) 
+		if ($relation instanceof BelongsToMany)
 		{
 			$this->insertBelongsToMany($recordName, $relation, $columnValue);
 
@@ -130,11 +130,11 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 
 	/**
 	 * Insert a belongsTo foreign key relationship.
-	 * 
-	 * @param  Model $record      
-	 * @param  Relation $relation    
-	 * @param  int $columnValue 
-	 * @return void              
+	 *
+	 * @param  Model $record
+	 * @param  Relation $relation
+	 * @param  int $columnValue
+	 * @return void
 	 */
 	protected function insertBelongsTo($record, $relation, $columnValue)
 	{
@@ -147,9 +147,9 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * Insert a belongsToMany foreign key relationship.
 	 *
 	 * @param  string recordName
-	 * @param  Relation $relation    
-	 * @param  int $columnValue 
-	 * @return void              
+	 * @param  Relation $relation
+	 * @param  int $columnValue
+	 * @return void
 	 */
 	public function insertBelongsToMany($recordName, $relation, $columnValue)
 	{
@@ -160,7 +160,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 		$otherKeyName = $relation->getOtherKey();
 		$foreignKeyValue = $this->generateKey($recordName);
 
-		foreach ($relatedRecords as $relatedRecord) 
+		foreach ($relatedRecords as $relatedRecord)
 		{
 			$otherKeyValue = $this->generateKey($relatedRecord);
 			$this->db->table($joinTable)->insert(array($foreignKeyName => $foreignKeyValue, $otherKeyName => $otherKeyValue));
@@ -169,8 +169,8 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 
 	/**
 	 * Generate the name of table's corresponding model.
-	 * 
-	 * @param  string $tableName 
+	 *
+	 * @param  string $tableName
 	 * @return string
 	 */
 	protected function generateModelName($tableName)
