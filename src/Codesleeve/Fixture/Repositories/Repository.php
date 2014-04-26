@@ -1,6 +1,6 @@
 <?php namespace Codesleeve\Fixture\Repositories;
 
-class Repository
+abstract class Repository
 {
 	/**
 	 * Generate an integer hash of a string.
