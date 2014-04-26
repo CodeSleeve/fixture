@@ -13,12 +13,17 @@
         "php": ">=5.3.0"
     },
     "require-dev": {
-        "mockery/mockery": "dev-master"
+        "mockery/mockery": "dev-master",
+        "illuminate/support": "~4",
+        "illuminate/database": "~4"
     },
     "autoload": {
         "psr-0": {
             "Codesleeve\\Fixture": "src/"
-        }
+        },
+        "classmap": [
+            "tests/eloquent_models"
+        ]
     },
     "minimum-stability": "dev"
 }
