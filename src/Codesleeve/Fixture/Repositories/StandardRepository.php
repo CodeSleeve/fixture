@@ -1,5 +1,7 @@
 <?php namespace Codesleeve\Fixture\Repositories;
 
+use PDO;
+
 class StandardRepository extends Repository implements RepositoryInterface
 {
 	/**
@@ -19,10 +21,9 @@ class StandardRepository extends Repository implements RepositoryInterface
 	/**
 	 * Constructor method
 	 *
-	 * @param  PDO $db
-	 * @param  Str $str
+	 * @param PDO $db
 	 */
-	public function __construct(\PDO $db)
+	public function __construct(PDO $db)
 	{
 		$this->db = $db;
 	}
@@ -32,11 +33,11 @@ class StandardRepository extends Repository implements RepositoryInterface
 	 *
 	 * @param  string $tableName
 	 * @param  array $records
-	 * @return Model
+	 * @return array
 	 */
-	public function buildRecords($tableName, $records)
+	public function buildRecords($tableName, array $records)
 	{
-		$insertedRecords = array();
+        $insertedRecords = array();
 		$this->tables[$tableName] = $tableName;
 
 		foreach ($records as $recordName => $recordValues)
@@ -50,9 +51,10 @@ class StandardRepository extends Repository implements RepositoryInterface
 			$fields = implode(', ', array_keys($recordValues));
 			$values = array_values($recordValues);
 			$placeholders = rtrim(str_repeat('?, ', count($recordValues)), ', ');
-			$sql = "INSERT INTO $tableName ($fields) VALUES ($placeholders)";
+            $sql = "INSERT INTO $tableName ($fields) VALUES ($placeholders)";
+
 			$sth = $this->db->prepare($sql);
-			$sth->execute($values);
+            $sth->execute($values);
 
 			$insertedRecords[$recordName] = (object) $recordValues;
 		}
@@ -80,8 +82,9 @@ class StandardRepository extends Repository implements RepositoryInterface
 	 * a foreign key and we'll hash it's values.
 	 *
 	 * @param array $values
+     * @return array
 	 */
-	protected function setForeignKeys($values)
+	protected function setForeignKeys(array $values)
 	{
 		foreach ($values as $key => &$value)
 		{

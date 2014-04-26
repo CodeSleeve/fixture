@@ -7,9 +7,9 @@ interface RepositoryInterface {
 	 *
 	 * @param  string $tableName
 	 * @param  array $records
-	 * @return Model
+	 * @return array
 	 */
-	public function buildRecords($tableName, $records);
+	public function buildRecords($tableName, array $records);
 
 	/**
 	 * Truncate a table.
