@@ -27,6 +27,7 @@ class Fixture extends Singleton
 	 * Build fixtures.
 	 *
 	 * @param  array $fixtures
+     * @throws Exceptions\InvalidFixtureLocationException
 	 * @return void
 	 */
 	public function up($fixtures = [])
@@ -48,6 +49,7 @@ class Fixture extends Singleton
 	public function down()
 	{
 		$this->repository->truncate();
+        $this->fixtures = [];
 	}
 
 	/**
@@ -104,14 +106,37 @@ class Fixture extends Singleton
      */
     public function __call($name, $arguments)
     {
-        $fixture = array_key_exists($name, $this->fixtures) ? $this->fixtures[$name] : null;
+        if (!array_key_exists($name, $this->fixtures)) {
+        	throw new Exceptions\InvalidFixtureNameException("Fixture: $name does not exist", 1);
+        }
 
-        if ($arguments && array_key_exists($arguments[0], $fixture))
-        {
+        $fixture = $this->fixtures[$name];
+
+        if ($arguments && array_key_exists($arguments[0], $fixture)) {
         	return $fixture[$arguments[0]];
         }
 
         return $fixture;
+    }
+
+    /**
+     * Return all fixtures.
+     * 
+     * @return array
+     */
+    public function getFixtures()
+    {
+    	return $this->fixtures;
+    }
+
+    /**
+     * Set all fixtures.
+     * 
+     * @param array $fixtures
+     */
+    public function setFixtures(array $fixtures)
+    {
+    	$this->fixtures = $fixtures;
     }
 
 	/**
@@ -171,13 +196,19 @@ class Fixture extends Singleton
 	 * We'll also store it inside the fixtures property for easy
 	 * access as an array element or class property from our tests.
 	 *
-	 * @param  array $fixture
+	 * @param  string $fixture
 	 * @return void
 	 */
 	protected function loadFixture($fixture)
 	{
 		$tableName = basename($fixture, '.php');
 		$records = include $fixture;
+
+		if (!is_array($records)) {
+			throw new Exceptions\InvalidFixtureDataException("Invalid fixture: $fixture, please ensure this file returns an array of data.", 1);
+			
+		}
+
 		$this->fixtures[$tableName] = $this->repository->buildRecords($tableName, $records);
 	}
 }
