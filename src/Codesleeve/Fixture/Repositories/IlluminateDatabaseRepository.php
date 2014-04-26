@@ -1,16 +1,17 @@
 <?php namespace Codesleeve\Fixture\Repositories;
 
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
 class IlluminateDatabaseRepository extends Repository implements RepositoryInterface
 {
 	/**
-     * An instance of Laravel's DatabaseManager class.
-     *
-     * @var DatabaseManager
+     * A PDO connection instance.
+     * 
+     * @var PDO
      */
     protected $db;
 
@@ -34,7 +35,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * @param  DatabaseManager $db
 	 * @param  Str $str
 	 */
-	public function __construct(DatabaseManager $db, Str $str)
+	public function __construct(\PDO $db, Str $str)
 	{
 		$this->db = $db;
 		$this->str = $str;
@@ -45,9 +46,9 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 *
 	 * @param  string $tableName
 	 * @param  array $records
-	 * @return Model
+	 * @return array
 	 */
-	public function buildRecords($tableName, $records)
+	public function buildRecords($tableName, array $records)
 	{
 		$insertedRecords = array();
 		$this->tables[$tableName] = $tableName;
@@ -94,7 +95,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	public function truncate()
 	{
 		foreach ($this->tables as $table) {
-			$this->db->table($table)->truncate();
+			$this->db->query("TRUNCATE TABLE  $table");
 		}
 
 		$this->tables = array();
@@ -109,7 +110,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * @param  string $columnValue
 	 * @return void
 	 */
-	protected function insertRelatedRecords($recordName, $record, $camelKey, $columnValue)
+	protected function insertRelatedRecords($recordName, Model $record, $camelKey, $columnValue)
 	{
 		$relation = $record->$camelKey();
 
@@ -136,7 +137,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * @param  int $columnValue
 	 * @return void
 	 */
-	protected function insertBelongsTo($record, $relation, $columnValue)
+	protected function insertBelongsTo(Model $record, Relation $relation, $columnValue)
 	{
 		$foreignKeyName = $relation->getForeignKey();
 		$foreignKeyValue = $this->generateKey($columnValue);
@@ -151,20 +152,59 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * @param  int $columnValue
 	 * @return void
 	 */
-	protected function insertBelongsToMany($recordName, $relation, $columnValue)
+	protected function insertBelongsToMany($recordName, Relation $relation, $columnValue)
 	{
 		$joinTable = $relation->getTable();
 		$this->tables[] = $joinTable;
 		$relatedRecords = explode(',', str_replace(', ', ',', $columnValue));
-		$foreignKeyName = $relation->getForeignKey();
-		$otherKeyName = $relation->getOtherKey();
-		$foreignKeyValue = $this->generateKey($recordName);
 
 		foreach ($relatedRecords as $relatedRecord)
 		{
-			$otherKeyValue = $this->generateKey($relatedRecord);
-			$this->db->table($joinTable)->insert(array($foreignKeyName => $foreignKeyValue, $otherKeyName => $otherKeyValue));
+			list($fields, $values) = $this->buildBelongsToManyRecord($recordName, $relation, $relatedRecord);
+			$placeholders = rtrim(str_repeat('?, ', count($values)), ', ');
+			$sql = "INSERT INTO $joinTable ($fields) VALUES ($placeholders)";
+			$sth = $this->db->prepare($sql);
+			$sth->execute($values);
 		}
+	}
+
+	/**
+	 * Parse the fixture data for belongsToManyRecord.
+	 * The current syntax allows for pivot data to be provided
+	 * via a pipe delimiter with colon separated key values.
+	 * <code>
+	 *    'Travis' => [
+     *        'first_name'   => 'Travis',
+	 *        'last_name'    => 'Bennett',
+	 *        'roles'		 => 'endUser|foo:bar, root'
+	 *    ]
+	 * </code>
+	 *
+	 * @param  string $recordName The name of the relation the fixture is defined on (e.g Travis).
+	 * @param  Relation $relation The relationship oject (should be of type belongsToMany).
+	 * @param  string $relatedRecord The related record data (e.g endUser|foo:bar or root).
+	 * @return array
+	 */
+	protected function buildBelongsToManyRecord($recordName, Relation $relation, $relatedRecord)
+	{
+		$pivotColumns = explode('|', $relatedRecord);
+		$relatedRecordName = array_shift($pivotColumns);
+		$foreignKeyName = explode('.', $relation->getForeignKey())[1];
+		$foreignKeyValue = $this->generateKey($recordName);
+		$otherKeyName = explode('.', $relation->getOtherKey())[1];
+		$otherKeyValue = $this->generateKey($relatedRecordName);
+		
+		$fields = "$foreignKeyName, $otherKeyName";
+		$values = array($foreignKeyValue, $otherKeyValue);
+		
+		foreach ($pivotColumns as $pivotColumn) 
+		{
+			list($columnName, $columnValue) = explode(':', $pivotColumn);
+			$fields .= ", $columnName";
+			$values[] = $columnValue;
+		}
+
+		return array($fields, $values);
 	}
 
 	/**
