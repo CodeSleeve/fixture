@@ -1,97 +1,74 @@
-<?php  
+<?php
 
 use Codesleeve\Fixture\Fixture;
-use \Mockery as m;
+use Mockery as m;
 
 class FixtureTest extends PHPUnit_Framework_TestCase
 {
+	/**
+     * An instance of the fixture class.
+     *
+     * @var Fixture
+     */
+    protected $fixture;
+
+    /**
+     * setUp method.
+     */
     public function setUp()
     {
-		
+    	$this->fixture = Fixture::getInstance();
     }
 
+    /**
+     * tearDown method.
+     */
     public function tearDown()
     {
         m::close();
     }
 
-    /**
-	 * Test that the up method thows an invalid fixture location exception
+	/**
+	 * Test that the up method throws an invalid fixture location exception
 	 * for fixture locations that don't exist.
 	 *
+     * @test
 	 * @expectedException Codesleeve\Fixture\Exceptions\InvalidFixtureLocationException
 	 * @return void
 	 */
-	public function testUpThrowsAnException()
+	public function it_should_throw_an_exception_if_the_fixture_path_does_not_exist()
 	{
-	    $mockedRepository = m::mock('Codesleeve\Fixture\Repositories\StandardRepository');
-
-		$fixture = Fixture::getInstance();
-		$fixture->setRepository($mockedRepository);
-		$fixture->up();
+        $this->fixture->setConfig(['location' => '']);
+        $this->fixture->up();
 	}
 
 	/**
-	 * Test that the up method will populate all fixtures when called
-	 * with an empty parameter list.
-	 * 
-	 * @return void
-	 */
-	public function testUpPopulatesAllFixtures()
-	{
-		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\StandardRepository');
-		$mockedRepository->shouldReceive('buildRecords')
-			->once()
-			->with('users', array('Travis' => array('first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root')))
-			->andReturn('foo');
+     * Test that that up method throws an invalid fixture error if one of the fixtures
+     * is not an array
+     *
+     * @test
+     * @expectedException Codesleeve\Fixture\Exceptions\InvalidFixtureDataException
+     * @return void
+     */
+    public function it_should_throw_an_exception_if_the_fixture_is_not_an_array()
+    {
+        $this->fixture->setConfig(['location' => __DIR__ . '/invalid_fixtures']);
+        $this->fixture->up();
+    }
 
-		$mockedRepository->shouldReceive('buildRecords')
-			->once()
-			->with('games', array('Diablo3' => array('title' => 'Diablo 3', 'user' => 'Travis')))
-			->andReturn('bar');
+    /**
+     * Test that an an exception is thrown when trying to access a fixture that 
+     * does not exist
+     *
+     * @test
+     * @expectedException Codesleeve\Fixture\Exceptions\InvalidFixtureNameException
+     * @return void
+     */
+    public function it_should_throw_an_exception_if_the_fixture_name_does_not_exist()
+    {
+        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/standard']);
+        $this->fixture->setFixtures([]);
 
-		$mockedRepository->shouldReceive('buildRecords')
-			->once()
-			->with('roles', array('root' => array('name' => 'root')))
-			->andReturn('baz');
-
-		$fixture = Fixture::getInstance();
-		$fixture->setRepository($mockedRepository);
-		$fixture->setConfig(array('location' => dirname(__FILE__) . '/fixtures'));
-		$fixture->up();
-
-		$this->assertEquals('foo', $fixture->users());
-		$this->assertEquals('bar', $fixture->games());
-		$this->assertEquals('baz', $fixture->roles());
-	}
-
-	/**
-	 * Test that the up method will only populate fixtures that 
-	 * are supplied to it via parameters.
-	 * 
-	 * @return void
-	 */
-	public function testUpPopulatesSomeFixtures()
-	{
-		$mockedRepository = m::mock('Codesleeve\Fixture\Repositories\StandardRepository');
-		$mockedRepository->shouldReceive('buildRecords')
-			->once()
-			->with('users', array('Travis' => array('first_name' => 'Travis', 'last_name'  => 'Bennett','roles' => 'endUser, root')))
-			->andReturn('foo');
-
-		$mockedRepository->shouldReceive('buildRecords')
-			->never()
-			->with('games', array('Diablo3' => array('title' => 'Diablo 3', 'user' => 'Travis')));
-
-		$mockedRepository->shouldReceive('buildRecords')
-			->never()
-			->with('roles', array('root' => array('name' => 'root')));
-
-		$fixture = Fixture::getInstance();
-		$fixture->setRepository($mockedRepository);
-		$fixture->setConfig(array('location' => dirname(__FILE__) . '/fixtures'));
-		$fixture->up(array('users'));
-
-		$this->assertEquals('foo', $fixture->users());
-	}
+        $this->fixture->foo();
+    }
 }
