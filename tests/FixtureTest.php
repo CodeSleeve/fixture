@@ -67,7 +67,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
     public function it_should_throw_an_exception_if_the_fixture_name_does_not_exist()
     {
         $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
-        $this->fixture->setFixtures([]);
+        $this->fixture->setFixtures(array());
 
         $this->fixture->foo();
     }
