@@ -28,6 +28,21 @@ class FixtureTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
+    /**
+     * Test that the fixture class is able to generate a single instance
+     * of itself. 
+     * 
+     * @test
+     * @return void
+     */
+    public function it_should_create_only_a_single_instance_of_itself()
+    {
+        $fixture = Fixture::getInstance();
+
+        $this->assertInstanceOf('Codesleeve\Fixture\Fixture', $fixture);
+        $this->assertSame($this->fixture, $fixture);
+    }
+
 	/**
 	 * Test that the up method throws an invalid fixture location exception
 	 * for fixture locations that don't exist.

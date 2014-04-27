@@ -1,8 +1,9 @@
 <?php namespace Codesleeve\Fixture;
 
+use Codesleeve\Fixture\Repositories\RepositoryInterface;
 use Faker\Generator; 
 
-class Fixture extends Singleton
+class Fixture
 {
 	/**
 	 * An array of eloquent collections (one for each loaded fixture).
@@ -10,6 +11,13 @@ class Fixture extends Singleton
 	 * @var array
 	 */
 	protected $fixtures;
+
+	/**
+     * An array of configuration options.
+     *
+     * @var Array
+     */
+    protected $config = array('location' => '');
 
 	/**
      * The ORM specific database repository that's being used.
@@ -25,22 +33,173 @@ class Fixture extends Singleton
     protected $faker;
 
     /**
-     * An array of configuration options.
+     * Returns the *Singleton* instance of this class.
      *
-     * @var Array
+     * @staticvar Singleton $instance The *Singleton* instances of this class.
+     *
+     * @param  array $config
+     * @param  RepositoryInterface $repository
+     * @return Singleton The *Singleton* instance.
      */
-    protected $config = array('location' => '');
+    public static function getInstance(array $config = array('location' => ''), RepositoryInterface $repository = null)
+    {
+        static $instance = null;
+
+        if (null === $instance) 
+        {
+        	$faker = \Faker\Factory::create();
+            $instance = new static($config, $faker, $repository);
+        }
+
+        return $instance;
+    }
 
     /**
-     * Constructor method.
+     * Protected constructor to prevent creating a new instance of the
+     * *Singleton* via the `new` operator from outside of this class.
      * 
-     * @param Generator $faker
+     * @param  array $config
+     * @param  Generator $faker
+     * @param  RepositoryInterface $repository
+     * @return void
      */
-    public function __construct(Generator $faker) {
+    protected function __construct(array $config, Generator $faker, RepositoryInterface $repository = null)
+    {
+    	$this->config = $config;
     	$this->faker = $faker;
+    	$this->repository = $repository;
+    }
+
+    /**
+     * Private clone method to prevent cloning of the instance of the
+     * *Singleton* instance.
+     *
+     * @return void
+     */
+    private function __clone()
+    {
+    }
+
+    /**
+     * Private unserialize method to prevent unserializing of the *Singleton*
+     * instance.
+     *
+     * @return void
+     */
+    private function __wakeup()
+    {
     }
 
 	/**
+	 * Setter method for the configuration array used by
+	 * the fixture.
+	 *
+	 * @param Array $configArray
+	 */
+	public function setConfig($configArray)
+	{
+		$this->config = $configArray;
+	}
+
+	/**
+	 * Getter method for the configuration array used by
+	 * the fixture.
+	 *
+	 * @return array
+	 */
+	public function getConfig()
+	{
+		return $this->config;
+	}
+
+	/**
+	 * Setter method for the repository instance used by
+	 * the fixture.
+	 *
+	 * @param Repositories\RepositoryInterface $repository
+	 */
+	public function setRepository(Repositories\RepositoryInterface $repository)
+	{
+		$this->repository = $repository;
+	}
+
+	/**
+	 * Getter method for the repository instance used by
+	 * the fixture.
+	 *
+	 * @return Repositories\RepositoryInterface
+	 */
+	public function getRepository()
+	{
+		return $this->repository;
+	}
+
+	/**
+	 * Setter method for the faker instance used by
+	 * the fixture.
+	 *
+	 * @param Generator $faker
+	 */
+	public function setFaker(Generator $faker)
+	{
+		$this->faker = $faker;
+	}
+
+	/**
+	 * Getter method for the faker instance used by
+	 * the fixture.
+	 *
+	 * @return Generator
+	 */
+	public function getFaker()
+	{
+		return $this->faker;
+	}
+
+	/**
+     * Return all fixtures.
+     * 
+     * @return array
+     */
+    public function getFixtures()
+    {
+    	return $this->fixtures;
+    }
+
+    /**
+     * Set all fixtures.
+     * 
+     * @param array $fixtures
+     */
+    public function setFixtures(array $fixtures)
+    {
+    	$this->fixtures = $fixtures;
+    }
+
+    /**
+     * Handle dynamic method calls to this class.
+     * This allows us to return fixture objects via method invocation.
+     *
+     * @param  string $name
+     * @param  array $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        if (!array_key_exists($name, $this->fixtures)) {
+        	throw new Exceptions\InvalidFixtureNameException("Fixture: $name does not exist", 1);
+        }
+
+        $fixture = $this->fixtures[$name];
+
+        if ($arguments && array_key_exists($arguments[0], $fixture)) {
+        	return $fixture[$arguments[0]];
+        }
+
+        return $fixture;
+    }
+
+    /**
 	 * Build fixtures.
 	 *
 	 * @param  array $fixtures
@@ -68,93 +227,6 @@ class Fixture extends Singleton
 		$this->repository->truncate();
         $this->fixtures = array();
 	}
-
-	/**
-	 * Setter method for the repository instance used by
-	 * the fixture.
-	 *
-	 * @param Repositories\RepositoryInterface $repository
-	 */
-	public function setRepository(Repositories\RepositoryInterface $repository)
-	{
-		$this->repository = $repository;
-	}
-
-	/**
-	 * Getter method for the repository instance used by
-	 * the fixture.
-	 *
-	 * @return Repositories\RepositoryInterface
-	 */
-	public function getRepository()
-	{
-		return $this->repository;
-	}
-
-	/**
-	 * Setter method for the configuration array used by
-	 * the fixture.
-	 *
-	 * @param Array $configArray
-	 */
-	public function setConfig($configArray)
-	{
-		$this->config = $configArray;
-	}
-
-	/**
-	 * Getter method for the configuration array used by
-	 * the fixture.
-	 *
-	 * @return array
-	 */
-	public function getConfig()
-	{
-		return $this->config;
-	}
-
-    /**
-     * Handle dynamic method calls to this class.
-     * This allows us to return fixture objects via method invocation.
-     *
-     * @param  string $name
-     * @param  array $arguments
-     * @return mixed
-     */
-    public function __call($name, $arguments)
-    {
-        if (!array_key_exists($name, $this->fixtures)) {
-        	throw new Exceptions\InvalidFixtureNameException("Fixture: $name does not exist", 1);
-        }
-
-        $fixture = $this->fixtures[$name];
-
-        if ($arguments && array_key_exists($arguments[0], $fixture)) {
-        	return $fixture[$arguments[0]];
-        }
-
-        return $fixture;
-    }
-
-    /**
-     * Return all fixtures.
-     * 
-     * @return array
-     */
-    public function getFixtures()
-    {
-    	return $this->fixtures;
-    }
-
-    /**
-     * Set all fixtures.
-     * 
-     * @param array $fixtures
-     */
-    public function setFixtures(array $fixtures)
-    {
-    	$this->fixtures = $fixtures;
-    }
 
     /**
      * Create fake data using Faker.
