@@ -39,7 +39,7 @@ class StandardRepositoryTest extends PHPUnit_Framework_TestCase
 	 */
 	public function it_should_populate_all_fixtures()
 	{
-        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/standard']);
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->up();
 
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
@@ -57,7 +57,7 @@ class StandardRepositoryTest extends PHPUnit_Framework_TestCase
 	 */
 	public function it_should_populate_only_some_fixtures()
 	{
-		$this->fixture->setConfig(['location' => __DIR__ . '/fixtures/standard']);
+		$this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->up(array('users'));
 
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);

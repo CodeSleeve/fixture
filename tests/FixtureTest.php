@@ -38,7 +38,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 	 */
 	public function it_should_throw_an_exception_if_the_fixture_path_does_not_exist()
 	{
-        $this->fixture->setConfig(['location' => '']);
+        $this->fixture->setConfig(array('location' => ''));
         $this->fixture->up();
 	}
 
@@ -52,7 +52,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_throw_an_exception_if_the_fixture_is_not_an_array()
     {
-        $this->fixture->setConfig(['location' => __DIR__ . '/invalid_fixtures']);
+        $this->fixture->setConfig(array('location' => __DIR__ . '/invalid_fixtures'));
         $this->fixture->up();
     }
 
@@ -66,7 +66,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_throw_an_exception_if_the_fixture_name_does_not_exist()
     {
-        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/standard']);
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->setFixtures([]);
 
         $this->fixture->foo();

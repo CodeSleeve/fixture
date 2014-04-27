@@ -40,7 +40,7 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
 	 */
 	public function it_should_populate_all_fixtures()
 	{
-        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/orm']);
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
         $this->fixture->up();
 
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
@@ -58,7 +58,7 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
 	 */
 	public function it_should_populate_only_some_fixtures()
 	{
-        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/orm']);
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
         $this->fixture->up(array('users'));
 
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
@@ -73,7 +73,7 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_populate_fixture_join_column_data()
     {
-        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/orm']);
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
         $this->fixture->up(array('users', 'roles'));
 
         $this->assertEquals(1, $this->fixture->users('Travis')->roles[0]->pivot->active);
