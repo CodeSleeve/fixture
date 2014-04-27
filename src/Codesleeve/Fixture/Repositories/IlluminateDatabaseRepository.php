@@ -190,9 +190,13 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	{
 		$pivotColumns = explode('|', $relatedRecord);
 		$relatedRecordName = array_shift($pivotColumns);
-		$foreignKeyName = explode('.', $relation->getForeignKey())[1];
+
+		$foreignKeyPieces = explode('.', $relation->getForeignKey());
+		$foreignKeyName = $foreignKeyPieces[1];
 		$foreignKeyValue = $this->generateKey($recordName);
-		$otherKeyName = explode('.', $relation->getOtherKey())[1];
+
+		$otherKeyPieces = explode('.', $relation->getOtherKey());
+		$otherKeyName = $otherKeyPieces[1];
 		$otherKeyValue = $this->generateKey($relatedRecordName);
 		
 		$fields = "$foreignKeyName, $otherKeyName";
