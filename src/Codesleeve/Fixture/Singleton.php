@@ -13,8 +13,10 @@ class Singleton
     {
         static $instance = null;
 
-        if (null === $instance) {
-            $instance = new static();
+        if (null === $instance) 
+        {
+            $faker = \Faker\Factory::create();
+            $instance = new static($faker);
         }
 
         return $instance;

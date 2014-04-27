@@ -1,5 +1,7 @@
 <?php namespace Codesleeve\Fixture;
 
+use Faker\Generator; 
+
 class Fixture extends Singleton
 {
 	/**
@@ -17,11 +19,26 @@ class Fixture extends Singleton
     protected $repository;
 
     /**
+     * An instance of the Faker library
+     * @var Generator
+     */
+    protected $faker;
+
+    /**
      * An array of configuration options.
      *
      * @var Array
      */
     protected $config = array('location' => '');
+
+    /**
+     * Constructor method.
+     * 
+     * @param Generator $faker
+     */
+    public function __construct(Generator $faker) {
+    	$this->faker = $faker;
+    }
 
 	/**
 	 * Build fixtures.
@@ -137,6 +154,19 @@ class Fixture extends Singleton
     public function setFixtures(array $fixtures)
     {
     	$this->fixtures = $fixtures;
+    }
+
+    /**
+     * Create fake data using Faker.
+     * 
+     * @return mixed
+     */
+    public function fake()
+    {
+    	$params = func_get_args();
+    	$method = array_shift($params);
+
+    	return call_user_func_array(array($this->faker, $method), $params);
     }
 
 	/**

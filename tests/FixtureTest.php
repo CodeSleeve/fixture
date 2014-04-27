@@ -71,4 +71,21 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 
         $this->fixture->foo();
     }
+
+    /**
+     * Test that fake fixture data (using the Faker library) can be generated.
+     * The desired behavior is that the 'fake' method of Fixture will act as a proxy
+     * to the Faker library.
+     *
+     * @test
+     * @return void
+     */
+    public function it_should_able_to_generate_fake_fixture_data()
+    {
+        $word = $this->fixture->fake('word');
+        $number = $this->fixture->fake('randomNumber', 1, 1);
+
+        $this->assertInternalType('string', $word);
+        $this->assertEquals(1, $number);
+    }
 }
