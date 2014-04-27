@@ -18,10 +18,10 @@ class User extends Eloquent {
 	 * 
 	 * @var array
 	 */
-	protected $fillable = [
+	protected $fillable = array (
 		'first_name',
 		'last_name'
-	];
+	);
 
 	/**
 	 * The attributes excluded from the model's JSON form.
