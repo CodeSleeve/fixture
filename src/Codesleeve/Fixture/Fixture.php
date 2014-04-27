@@ -30,7 +30,7 @@ class Fixture extends Singleton
      * @throws Exceptions\InvalidFixtureLocationException
 	 * @return void
 	 */
-	public function up($fixtures = [])
+	public function up($fixtures = array())
 	{
 		$location = $this->config['location'];
 
@@ -49,7 +49,7 @@ class Fixture extends Singleton
 	public function down()
 	{
 		$this->repository->truncate();
-        $this->fixtures = [];
+        $this->fixtures = array();
 	}
 
 	/**

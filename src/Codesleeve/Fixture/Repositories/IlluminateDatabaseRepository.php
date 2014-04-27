@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
+use PDO;
 
 class IlluminateDatabaseRepository extends Repository implements RepositoryInterface
 {
@@ -35,7 +36,7 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	 * @param  DatabaseManager $db
 	 * @param  Str $str
 	 */
-	public function __construct(\PDO $db, Str $str)
+	public function __construct(PDO $db, Str $str)
 	{
 		$this->db = $db;
 		$this->str = $str;
