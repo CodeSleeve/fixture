@@ -97,8 +97,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_able_to_generate_fake_fixture_data()
     {
-        $word = $this->fixture->fake('word');
-        $number = $this->fixture->fake('randomNumber', 1, 1);
+        $word = Fixture::fake('word');
+        $number = Fixture::fake('randomNumber', 1, 1);
 
         $this->assertInternalType('string', $word);
         $this->assertEquals(1, $number);

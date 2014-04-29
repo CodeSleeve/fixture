@@ -30,7 +30,7 @@ class Fixture
      * An instance of the Faker library
      * @var Generator
      */
-    protected $faker;
+    protected static $faker;
 
     /**
      * Returns the *Singleton* instance of this class.
@@ -45,10 +45,8 @@ class Fixture
     {
         static $instance = null;
 
-        if (null === $instance) 
-        {
-        	$faker = \Faker\Factory::create();
-            $instance = new static($config, $faker, $repository);
+        if (null === $instance) {
+            $instance = new static($config, $repository);
         }
 
         return $instance;
@@ -59,14 +57,12 @@ class Fixture
      * *Singleton* via the `new` operator from outside of this class.
      * 
      * @param  array $config
-     * @param  Generator $faker
      * @param  RepositoryInterface $repository
      * @return void
      */
-    protected function __construct(array $config, Generator $faker, RepositoryInterface $repository = null)
+    protected function __construct(array $config, RepositoryInterface $repository = null)
     {
     	$this->config = $config;
-    	$this->faker = $faker;
     	$this->repository = $repository;
     }
 
@@ -132,28 +128,6 @@ class Fixture
 	public function getRepository()
 	{
 		return $this->repository;
-	}
-
-	/**
-	 * Setter method for the faker instance used by
-	 * the fixture.
-	 *
-	 * @param Generator $faker
-	 */
-	public function setFaker(Generator $faker)
-	{
-		$this->faker = $faker;
-	}
-
-	/**
-	 * Getter method for the faker instance used by
-	 * the fixture.
-	 *
-	 * @return Generator
-	 */
-	public function getFaker()
-	{
-		return $this->faker;
 	}
 
 	/**
@@ -233,12 +207,24 @@ class Fixture
      * 
      * @return mixed
      */
-    public function fake()
+    public static function fake()
     {
+    	static::bootFaker();
     	$params = func_get_args();
     	$method = array_shift($params);
 
-    	return call_user_func_array(array($this->faker, $method), $params);
+    	return call_user_func_array(array(static::$faker, $method), $params);
+    }
+
+    /**
+     * Create an instance of the faker method (if one doesn't already exist)
+     * and then hang it on this class as a static property.
+     * 
+     * @return void
+     */
+    protected static function bootFaker()
+    {
+    	static::$faker = static::$faker ?: \Faker\Factory::create();
     }
 
 	/**
