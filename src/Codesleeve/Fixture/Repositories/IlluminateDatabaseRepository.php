@@ -89,20 +89,6 @@ class IlluminateDatabaseRepository extends Repository implements RepositoryInter
 	}
 
 	/**
-	 * Truncate a table.
-	 *
-	 * @return void
-	 */
-	public function truncate()
-	{
-		foreach ($this->tables as $table) {
-			$this->db->query("TRUNCATE TABLE  $table");
-		}
-
-		$this->tables = array();
-	}
-
-	/**
 	 * Insert related records for a fixture.
 	 *
 	 * @param  string $recordName

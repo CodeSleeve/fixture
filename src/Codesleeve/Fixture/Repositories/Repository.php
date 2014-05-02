@@ -3,6 +3,20 @@
 abstract class Repository
 {
 	/**
+	 * Truncate a table.
+	 *
+	 * @return void
+	 */
+	public function truncate()
+	{
+		foreach ($this->tables as $table) {
+			$this->db->query("DELETE FROM $table");
+		}
+
+		$this->tables = array();
+	}
+
+	/**
 	 * Generate an integer hash of a string.
 	 * We'll use this method to convert a fixture's name into the
 	 * primary key of it's corresponding database table record.

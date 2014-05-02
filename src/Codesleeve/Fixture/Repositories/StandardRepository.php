@@ -63,20 +63,6 @@ class StandardRepository extends Repository implements RepositoryInterface
 	}
 
 	/**
-	 * Truncate a table.
-	 *
-	 * @return void
-	 */
-	public function truncate()
-	{
-		foreach ($this->tables as $table) {
-			$this->db->query("TRUNCATE TABLE $table");
-		}
-
-		$this->tables = array();
-	}
-
-	/**
 	 * Loop through each of the fixture column/values.
 	 * If a column ends in '_id' we're going to assume it's
 	 * a foreign key and we'll hash it's values.
