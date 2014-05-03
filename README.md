@@ -1,5 +1,9 @@
 #Fixture
 [![Build Status](https://travis-ci.org/CodeSleeve/fixture.png?branch=development)](https://travis-ci.org/CodeSleeve/fixture)
+[![Latest Stable Version](https://poser.pugx.org/codesleeve/fixture/v/stable.png)](https://packagist.org/packages/codesleeve/fixture) 
+[![Total Downloads](https://poser.pugx.org/codesleeve/fixture/downloads.png)](https://packagist.org/packages/codesleeve/fixture) 
+[![Latest Unstable Version](https://poser.pugx.org/codesleeve/fixture/v/unstable.png)](https://packagist.org/packages/codesleeve/fixture) 
+[![License](https://poser.pugx.org/codesleeve/fixture/license.png)](https://packagist.org/packages/codesleeve/fixture)
 
 A framework agnostic, simple (yet elegant) fixture library for php.
 Fixture was created by [Travis Bennett](https://twitter.com/tandrewbennett).
@@ -8,6 +12,7 @@ Fixture was created by [Travis Bennett](https://twitter.com/tandrewbennett).
 * [Installation](#installation)
 * [Overview](#overview)
 * [Repositories](#repositories)
+* [Setup](#setup)
 * [Examples](#examples)
   * [Standard Repository](#standard-repository)
   * [Illuminate Database Repository](#illuminate-database-repository)
@@ -140,9 +145,7 @@ class fooTest extends PHPUnit_Framework_TestCase
 	public function setUp() 
 	{
 		// set the fixture instance
-		$db = new \PDO('sqlite::memory:');
-		$repository = new StandardRepository($db);
-		$this->fixture = Fixture::getInstance(array('location' => 'path/to/your/fixtures.php'), $repository);
+		$this->fixture = Fixture::getInstance();
 		
 		// populate our tables
 		$this->fixture->up();
@@ -176,10 +179,46 @@ Fixture currently supports two repositories:
 * Standard Repository - This is the most basic repository avaialble for this package.  It requires no ORM and has no concept of relationships.
 * IlluminateDatabase Repository - This repository allows full usage of the Eloquent ORM.  when creating fixture data; eloquent relationships can be used in order to easily manage foreign keys among fixture data.
 
+## Setup
+In order to use fixture, you're going to first need to initialize it.  A good place to do this is inside your bootstrap file (configured via your phpunit.xml), but you're certainly welcome to do this where it makes the most sense for you:
+
+```php
+// Create a pdo instance (this may already exist in your app)
+$db = new \PDO('sqlite::memory:');
+
+// Use the pdo instance to create a new repository instance
+$repository = new StandardRepository($db);
+
+// Create a configuration array.  
+$config = array(
+	'location' => 'path/to/your/fixtures.php'	// The directory you wish to load fixture files from.
+);
+
+// Fixture implements a singleton pattern.
+// Create an instance of and set the config and repo.
+$fixture = Fixture::getInstance();
+$fixture->setConfig($config);
+$fixture->setRepository($repository);
+
+// Alternatively, you could do this in one swoop.
+$fixture = Fixture::getInstance($config, $repository);
+```
+
 ## Examples
+For our examples, let's assume that we have the following bleach-themed system:
+* Tables: 
+	* soul_reapers
+	* zanpakutos
+	* ranks
+	* ranks_soul_reapers (columns: integer rank_id, integer soul_reaper_id, integer status).
+* Relationships: 
+	* A soul reaper has one zanpakuto, belongs to many ranks (many to many).
+	* A zanpakuto belongs to one soul reaper only.
+	* A rank belongs to many soul reapers.
+	
 ### Standard Repository
 #### Step 1 - Fixture setup
-Inside your application test folder, create a folder named fixtures.  Next, create a couple of fixture files inside this folder.  Fixture files are written using native php array syntax.  To create one, simply create a new file named after the table that the fixture corresponds to and have it return an array of data.  As an example of this, let's create some fixture data for a hypothetical 'soul_reapers' table (bear with me, I'm a huge Bleach fan):
+Inside your application test folder, create a folder named fixtures.  Next, create a couple of fixture files inside this folder.  Fixture files are written using native php array syntax.  To create one, simply create a new file named after the table that the fixture corresponds to and have it return an array of data.  As an example of this, let's create some fixture data for our 'soul_reapers' table:
 
 in tests/fixtures/soul_reapers.php
 ```php
@@ -199,7 +238,7 @@ return array (
 );
 ```
 
-Here we're simple returning a nested array containing our fixture data.  Notice that there are two fixtures and that they each have a unique name (this is very important as you'll see shortly we can easily reference loaded fixture data from within our tests).  Now, we can't have soul reapers without zanpakutos, so let's assume we've also got a fictional 'zanpakutos' table that we need to seed some data into.  We'll create the following fixture:
+Here we're simple returning a nested array containing our fixture data.  Notice that there are two fixtures and that they each have a unique name (this is very important as you'll see shortly we can easily reference loaded fixture data from within our tests).  Now, we can't have soul reapers without zanpakutos, so let's seed our zanpakutos table with the following fixture:
 
 in tests/fixtures/zanpakutos.php
 ```php
@@ -219,7 +258,7 @@ return array (
 );
 ```
 
-Because a zanpakuto must belong to a soul reaper (it's part of their soul after all) we know that our 'zanpakutos' table will contain a column named 'soul_reaper_id'.  In order to tie a zanpakuto to it's owner, we can simply set this foreign key to the name of the corresponding soul reaper it belongs to.  There's no need to worry about specific id's, insertion order, etc.  It's pretty simple.  Moving forward, we've so far been able to easily express our parent/child (1 to 1) relationship between 'soul_reapers' and 'zanpakutos', but what about many to many (join table) relationships?  As an example of how this might work, let's now assume that we also have two more tables; 'ranks' and 'ranks_soul_reapers'.  Our ranks table fixture will look like this:
+Because a zanpakuto must belong to a soul reaper (it's part of their soul after all) we know that our 'zanpakutos' table will contain a column named 'soul_reaper_id'.  In order to tie a zanpakuto to it's owner, we can simply set this foreign key to the name of the corresponding soul reaper it belongs to.  There's no need to worry about specific id's, insertion order, etc.  It's pretty simple.  Moving forward, we've so far been able to easily express our parent/child (1 to 1) relationship between 'soul_reapers' and 'zanpakutos', but what about many to many (join table) relationships?  As an example of how this might work, let's look at two more tables; 'ranks' and 'ranks_soul_reapers'.  Our ranks table fixture will look like this:
 
 in tests/fixtures/ranks.php
 ```php
@@ -328,17 +367,6 @@ echo $this->fixture->soul_reapers('Ichigo')->last_name;
 ```
 
 ### Illuminate Database Repository
-For this example, let's assume (as in example 1) that we have the same bleach themed system.  It consists of the following:
-* Tables: 
-** soul_reapers
-** zanpakutos
-** ranks
-** ranks_soul_reapers (columns: integer rank_id, integer soul_reaper_id, integer status).
-* Relationships: 
-** A soul reaper has one zanpakuto, belongs to many ranks (many to many).
-** A zanpakuto belongs to one soul reaper only.
-** A rank belongs to many soul reapers.
-
 #### Step 1 - Model setup
 Inside your models folder (or wherever you currently store your models at), create both a SoulReaper and a Zanpakuto model:
 ```php
@@ -511,7 +539,7 @@ in tests/exampleTest.php
 	}
 ```
 ## Faking Data
-Fixture has built in integration with [faker](https://github.com/fzaninotto/Faker).  Creating fake fixture data is a breeze:
+Fixture has built in integration with [Faker](https://github.com/fzaninotto/Faker).  Creating fake fixture data is a breeze:
 ```php
 // We can call Faker through fixture via the 'Fake' method.
 // Here, we'll whip up some fake info for Ichigo:

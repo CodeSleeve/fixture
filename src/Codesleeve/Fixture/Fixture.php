@@ -25,7 +25,7 @@ class Fixture
      *
      * @var Array
      */
-    protected $config = array('location' => '');
+    protected $config;
 
 	/**
      * The ORM specific database repository that's being used.
@@ -49,12 +49,20 @@ class Fixture
      * @param  RepositoryInterface $repository
      * @return Singleton The *Singleton* instance.
      */
-    public static function getInstance(array $config = array('location' => ''), RepositoryInterface $repository = null)
+    public static function getInstance(array $config = array(), RepositoryInterface $repository = null)
     {
         static $instance = null;
 
         if (null === $instance) {
-            $instance = new static($config, $repository);
+            $instance = new static();
+        }
+
+        if ($config) {
+        	$instance->config = $config;
+        }
+
+        if ($repository) {
+        	$instance->repository = $repository;
         }
 
         return $instance;
@@ -64,14 +72,10 @@ class Fixture
      * Protected constructor to prevent creating a new instance of the
      * *Singleton* via the `new` operator from outside of this class.
      * 
-     * @param  array $config
-     * @param  RepositoryInterface $repository
      * @return void
      */
-    protected function __construct(array $config, RepositoryInterface $repository = null)
+    protected function __construct()
     {
-    	$this->config = $config;
-    	$this->repository = $repository;
     }
 
     /**
