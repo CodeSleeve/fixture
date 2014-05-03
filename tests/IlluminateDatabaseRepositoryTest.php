@@ -15,6 +15,13 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
     protected $fixture;
 
     /**
+     * A PDO instance.
+     * 
+     * @var PDO
+     */
+    protected $db;
+
+    /**
      * setUp method.
      */
     public function setUp()
@@ -27,7 +34,10 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        $this->fixture->down();
+        $this->db->query("DELETE FROM users");
+        $this->db->query("DELETE FROM roles");
+        $this->db->query("DELETE FROM games");
+        $this->fixture->setFixtures(array());
         m::close();
     }
 
@@ -43,9 +53,14 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
         $this->fixture->up();
 
+        list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
+
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
         $this->assertEquals('Diablo 3', $this->fixture->games('Diablo3')->title);
         $this->assertEquals('root', $this->fixture->roles('root')->name);
+        $this->assertEquals(2, $userCount);
+        $this->assertEquals(2, $roleCount);
+        $this->assertEquals(2, $gameCount);
         $this->assertCount(3, $this->fixture->getFixtures());
 	}
 
@@ -61,9 +76,35 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
         $this->fixture->up(array('users'));
 
+        list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
+
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
+        $this->assertEquals(2, $userCount);
+        $this->assertEquals(0, $roleCount);
+        $this->assertEquals(0, $gameCount);
         $this->assertCount(1, $this->fixture->getFixtures());
 	}
+
+    /**
+     * Test that the down method will truncate all current fixture table data
+     * and empty the fixtures array.
+     *
+     * @test
+     * @return void
+     */
+    public function it_should_truncate_all_fixtures()
+    {
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
+        $this->fixture->up();
+        $this->fixture->down();
+
+        list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
+
+        $this->assertEmpty($this->fixture->getFixtures());
+        $this->assertEquals(0, $userCount);
+        $this->assertEquals(0, $roleCount);
+        $this->assertEquals(0, $gameCount);
+    }
 
     /**
      * Test that extra join columns for a HABTM fixture are being populated.
@@ -91,14 +132,14 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
             return;
         }
 
-        $db = $this->buildDB();
+        $this->db = $this->buildDB();
         $str = new Str;
         $this->fixture = Fixture::getInstance();
-        $repository = new IlluminateDatabaseRepository($db, $str);
+        $repository = new IlluminateDatabaseRepository($this->db, $str);
         $this->fixture->setRepository($repository);
 
         // Bootstrap Eloquent
-        $sqliteConnection = new Illuminate\Database\SQLiteConnection($db);
+        $sqliteConnection = new Illuminate\Database\SQLiteConnection($this->db);
         $resolver = new Illuminate\Database\ConnectionResolver(array('sqlite' => $sqliteConnection));
         $resolver->setDefaultConnection('sqlite');
         Illuminate\Database\Eloquent\Model::setConnectionResolver($resolver);
@@ -118,5 +159,25 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
         $db->exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT)");
 
         return $db;
+    }
+
+    /**
+     * Helper method to return the current record count in each
+     * fixture table.
+     * 
+     * @return array
+     */
+    protected function getRecordCounts()
+    {
+        $userQuery = $this->db->query('SELECT COUNT(*) AS count from users');
+        $userCount = $userQuery->fetchColumn(0);
+
+        $roleQuery = $this->db->query('SELECT COUNT(*) AS count from roles');
+        $roleCount = $roleQuery->fetchColumn(0);
+
+        $gameQuery = $this->db->query('SELECT COUNT(*) AS count from games');
+        $gameCount = $gameQuery->fetchColumn(0);
+
+        return array($userCount, $roleCount, $gameCount);
     }
 }
