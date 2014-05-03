@@ -3,6 +3,14 @@
 use Codesleeve\Fixture\Repositories\RepositoryInterface;
 use Faker\Generator; 
 
+/**
+ * A framework agnostic, simple (yet elegant) fixture library for php.
+ *
+ * @package Codesleeve/Fixture
+ * @version v1.0.0
+ * @author Travis Bennett <tandrewbennett@hotmail.com>
+ * @link http://travisbennett.net
+ */
 class Fixture
 {
 	/**
