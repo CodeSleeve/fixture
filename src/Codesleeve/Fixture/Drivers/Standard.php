@@ -1,8 +1,8 @@
-<?php namespace Codesleeve\Fixture\Repositories;
+<?php namespace Codesleeve\Fixture\Drivers;
 
 use PDO;
 
-class StandardRepository extends Repository implements RepositoryInterface
+class Standard extends BaseDriver implements DriverInterface
 {
 	/**
      * A PDO connection instance.

@@ -1,4 +1,4 @@
-<?php namespace Codesleeve\Fixture\Repositories;
+<?php namespace Codesleeve\Fixture\Drivers;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use PDO;
 
-class IlluminateDatabaseRepository extends Repository implements RepositoryInterface
+class Eloquent extends BaseDriver implements DriverInterface
 {
 	/**
      * A PDO connection instance.

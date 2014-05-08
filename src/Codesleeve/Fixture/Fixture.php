@@ -1,6 +1,6 @@
 <?php namespace Codesleeve\Fixture;
 
-use Codesleeve\Fixture\Repositories\RepositoryInterface;
+use Codesleeve\Fixture\Drivers\DriverInterface;
 use Faker\Generator; 
 
 /**
@@ -28,11 +28,11 @@ class Fixture
     protected $config;
 
 	/**
-     * The ORM specific database repository that's being used.
+     * The ORM specific database driver that's being used.
      *
-     * @var Repository
+     * @var Driver
      */
-    protected $repository;
+    protected $driver;
 
     /**
      * An instance of the Faker library
@@ -46,10 +46,10 @@ class Fixture
      * @staticvar Singleton $instance The *Singleton* instances of this class.
      *
      * @param  array $config
-     * @param  RepositoryInterface $repository
+     * @param  DriverInterface $driver
      * @return Singleton The *Singleton* instance.
      */
-    public static function getInstance(array $config = array(), RepositoryInterface $repository = null)
+    public static function getInstance(array $config = array(), DriverInterface $driver = null)
     {
         static $instance = null;
 
@@ -61,8 +61,8 @@ class Fixture
         	$instance->config = $config;
         }
 
-        if ($repository) {
-        	$instance->repository = $repository;
+        if ($driver) {
+        	$instance->driver = $driver;
         }
 
         return $instance;
@@ -121,25 +121,25 @@ class Fixture
 	}
 
 	/**
-	 * Setter method for the repository instance used by
+	 * Setter method for the driver instance used by
 	 * the fixture.
 	 *
-	 * @param Repositories\RepositoryInterface $repository
+	 * @param Drivers\DriverInterface $driver
 	 */
-	public function setRepository(Repositories\RepositoryInterface $repository)
+	public function setDriver(Drivers\DriverInterface $driver)
 	{
-		$this->repository = $repository;
+		$this->driver = $driver;
 	}
 
 	/**
-	 * Getter method for the repository instance used by
+	 * Getter method for the driver instance used by
 	 * the fixture.
 	 *
-	 * @return Repositories\RepositoryInterface
+	 * @return Drivers\DriverInterface
 	 */
-	public function getRepository()
+	public function getDriver()
 	{
-		return $this->repository;
+		return $this->driver;
 	}
 
 	/**
@@ -210,7 +210,7 @@ class Fixture
 	 */
 	public function down()
 	{
-		$this->repository->truncate();
+		$this->driver->truncate();
         $this->fixtures = array();
 	}
 
@@ -309,6 +309,6 @@ class Fixture
 			
 		}
 
-		$this->fixtures[$tableName] = $this->repository->buildRecords($tableName, $records);
+		$this->fixtures[$tableName] = $this->driver->buildRecords($tableName, $records);
 	}
 }

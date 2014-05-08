@@ -11,11 +11,11 @@ Fixture was created by [Travis Bennett](https://twitter.com/tandrewbennett).
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Overview](#overview)
-* [Repositories](#repositories)
+* [Drivers](#repositories)
 * [Setup](#setup)
 * [Examples](#examples)
-  * [Standard Repository](#standard-repository)
-  * [Illuminate Database Repository](#illuminate-database-repository)
+  * [Standard Driver](#standard-driver)
+  * [Eloquent Driver](#eloquent-driver)
 * [Faking Data](#faking-data)
 * [Contributing](#contributing)
 
@@ -128,7 +128,6 @@ into this:
 class fooTest extends PHPUnit_Framework_TestCase
 {
 	use Codesleeve\Fixture\Fixture;
-    use Codesleeve\Fixture\Repositories\StandardRepository;
 	
 	/**
      * The fixture instance.
@@ -174,10 +173,10 @@ class fooTest extends PHPUnit_Framework_TestCase
 }
 ```
 
-## Repositories
-Fixture currently supports two repositories:
-* Standard Repository - This is the most basic repository avaialble for this package.  It requires no ORM and has no concept of relationships.
-* IlluminateDatabase Repository - This repository allows full usage of the Eloquent ORM.  when creating fixture data; eloquent relationships can be used in order to easily manage foreign keys among fixture data.
+## Drivers
+Fixture currently supports two drivers:
+* Standard Driver - This is the most basic driver avaialble for this package.  It requires no ORM and has no concept of relationships.
+* Eloquent Driver - This driver allows full usage of the Eloquent ORM.  when creating fixture data; eloquent relationships can be used in order to easily manage foreign keys among fixture data.
 
 ## Setup
 In order to use fixture, you're going to first need to initialize it.  A good place to do this is inside your bootstrap file (configured via your phpunit.xml), but you're certainly welcome to do this where it makes the most sense for you:
@@ -186,8 +185,8 @@ In order to use fixture, you're going to first need to initialize it.  A good pl
 // Create a pdo instance (this may already exist in your app)
 $db = new \PDO('sqlite::memory:');
 
-// Use the pdo instance to create a new repository instance
-$repository = new StandardRepository($db);
+// Use the pdo instance to create a new driver instance
+$driver = new Codesleeve\Fixture\Drivers\Standard($db);
 
 // Create a configuration array.  
 $config = array(
@@ -198,10 +197,10 @@ $config = array(
 // Create an instance of and set the config and repo.
 $fixture = Fixture::getInstance();
 $fixture->setConfig($config);
-$fixture->setRepository($repository);
+$fixture->setDriver($driver);
 
 // Alternatively, you could do this in one swoop.
-$fixture = Fixture::getInstance($config, $repository);
+$fixture = Fixture::getInstance($config, $driver);
 ```
 
 ## Examples
@@ -311,7 +310,7 @@ in tests/exampleTest.php
 ```php
 
 	use Codesleeve\Fixture\Fixture;
-    use Codesleeve\Fixture\Repositories\StandardRepository;
+    use Codesleeve\Fixture\Drivers\Standard as StandardDriver;
 	
 	/**
      * The fixture instance.
@@ -328,9 +327,7 @@ in tests/exampleTest.php
 	public function setUp() 
 	{
 		// set the fixture instance
-		$db = new \PDO('sqlite::memory:');
-		$repository = new StandardRepository($db);
-		$this->fixture = Fixture::getInstance(array('location' => 'path/to/your/fixtures.php'), $repository);
+		$this->fixture = Fixture::getInstance();
 		
 		// populate our tables
 		$this->fixture->up();
@@ -348,13 +345,7 @@ in tests/exampleTest.php
 ```
 
 What's going on here?  A few things:
-* We're creating an instance of 'Codesleeve\Fixture\Repositories\StandardRepository' and caching it as a property on the test class.
-	* This is the most basic repository avaialble for this package.  It requires no ORM and has no concept of relationships.
-	* In order to create a new repository we first need to instantiate a PDO database connection object.  We then need to instantiate an instance
-	of the StandardRepository (more on this later).
-* We're creating a new instance of fixture via the getInstance() method (this is a singleton pattern).
-* We're injecting the stnadardRepository object into the fixture instance via the setRepository() method.
-* We're injecting in a configuration array with a location parameter that contains the file system location of the folder we want to load our fixtures from.
+* We're getting an instance of fixture via the getInstance() method (this is a singleton pattern).
 * We're invoking the up() method on the fixture object.  This method seeds the database and caches the inserted records as php standard objects on the fixture object.
 	* Invoking the up method with no params will seed all fixtures.
 	* Invoking the up method with an array of fixture names will seed only those fixtures (e.g $this->fixture->up(array('soul_reapers')) would seed the soul_reapers table only).
@@ -366,7 +357,7 @@ As an aded benefit, seeded database records can be accessed (if needed) as php s
 echo $this->fixture->soul_reapers('Ichigo')->last_name;
 ```
 
-### Illuminate Database Repository
+### Eloquent Driver
 #### Step 1 - Model setup
 Inside your models folder (or wherever you currently store your models at), create both a SoulReaper and a Zanpakuto model:
 ```php
@@ -503,7 +494,7 @@ in tests/exampleTest.php
 ```php
 
 	use Codesleeve\Fixture\Fixture;
-    use Codesleeve\Fixture\Repositories\IlluminateDatabaseRepository;
+    use Codesleeve\Fixture\Drivers\Eloquent as EloquentDriver;
 	
 	/**
      * The fixture instance.
@@ -521,8 +512,8 @@ in tests/exampleTest.php
 	{
 		// set the fixture instance
 		$db = new \PDO('sqlite::memory:');
-		$repository = new IlluminateDatabaseRepository($db);
-		$this->fixture = Fixture::getInstance(array('location' => 'path/to/your/fixtures.php'), $repository);
+		$driver = new EloquentDriver($db);
+		$this->fixture = Fixture::getInstance(array('location' => 'path/to/your/fixtures.php'), $driver);
 		
 		// populate our tables
 		$this->fixture->up();

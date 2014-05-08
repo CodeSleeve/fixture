@@ -1,11 +1,10 @@
 <?php  
 
 use Codesleeve\Fixture\Fixture;
-use Codesleeve\Fixture\Repositories\IlluminateDatabaseRepository;
-use Illuminate\Support\Str;
+use Codesleeve\Fixture\Drivers\Standard;
 use Mockery as m;
 
-class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
+class StandardTest extends PHPUnit_Framework_TestCase
 {
     /**
      * An instance of the fixture class.
@@ -50,7 +49,7 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
 	 */
 	public function it_should_populate_all_fixtures()
 	{
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->up();
 
         list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
@@ -58,9 +57,9 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
         $this->assertEquals('Diablo 3', $this->fixture->games('Diablo3')->title);
         $this->assertEquals('root', $this->fixture->roles('root')->name);
-        $this->assertEquals(2, $userCount);
-        $this->assertEquals(2, $roleCount);
-        $this->assertEquals(2, $gameCount);
+        $this->assertEquals(1, $userCount);
+        $this->assertEquals(1, $roleCount);
+        $this->assertEquals(1, $gameCount);
         $this->assertCount(3, $this->fixture->getFixtures());
 	}
 
@@ -73,13 +72,13 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
 	 */
 	public function it_should_populate_only_some_fixtures()
 	{
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
+		$this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->up(array('users'));
-
+        
         list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
 
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
-        $this->assertEquals(2, $userCount);
+        $this->assertEquals(1, $userCount);
         $this->assertEquals(0, $roleCount);
         $this->assertEquals(0, $gameCount);
         $this->assertCount(1, $this->fixture->getFixtures());
@@ -94,7 +93,7 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_truncate_all_fixtures()
     {
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->up();
         $this->fixture->down();
 
@@ -104,21 +103,6 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $userCount);
         $this->assertEquals(0, $roleCount);
         $this->assertEquals(0, $gameCount);
-    }
-
-    /**
-     * Test that extra join columns for a HABTM fixture are being populated.
-     *
-     * @test
-     * @return void
-     */
-    public function it_should_populate_fixture_join_column_data()
-    {
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
-        $this->fixture->up(array('users', 'roles'));
-
-        $this->assertEquals(1, $this->fixture->users('Travis')->roles[0]->pivot->active);
-        $this->assertEquals(0, $this->fixture->users('Travis')->roles[1]->pivot->active);
     }
 
     /**
@@ -133,20 +117,13 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
         }
 
         $this->db = $this->buildDB();
-        $str = new Str;
         $this->fixture = Fixture::getInstance();
-        $repository = new IlluminateDatabaseRepository($this->db, $str);
-        $this->fixture->setRepository($repository);
-
-        // Bootstrap Eloquent
-        $sqliteConnection = new Illuminate\Database\SQLiteConnection($this->db);
-        $resolver = new Illuminate\Database\ConnectionResolver(array('sqlite' => $sqliteConnection));
-        $resolver->setDefaultConnection('sqlite');
-        Illuminate\Database\Eloquent\Model::setConnectionResolver($resolver);
+        $repository = new Standard($this->db);
+        $this->fixture->setDriver($repository);
     }
 
     /**
-     * Build a PDO instance.
+     * Helper method to build a PDO instance.
      *
      * @return PDO
      */
@@ -155,7 +132,6 @@ class IlluminateDatabaseRepositoryTest extends PHPUnit_Framework_TestCase
         $db = new PDO('sqlite::memory:');
         $db->exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT)");
         $db->exec("CREATE TABLE IF NOT EXISTS roles (id INTEGER PRIMARY KEY, name TEXT)");
-        $db->exec("CREATE TABLE IF NOT EXISTS roles_users (id INTEGER PRIMARY KEY, role_id INTEGER, user_id INTEGER, active INTEGER DEFAULT 0)");
         $db->exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT)");
 
         return $db;

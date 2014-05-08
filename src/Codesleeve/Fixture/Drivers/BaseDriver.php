@@ -1,6 +1,6 @@
-<?php namespace Codesleeve\Fixture\Repositories;
+<?php namespace Codesleeve\Fixture\Drivers;
 
-abstract class Repository
+abstract class BaseDriver
 {
 	/**
 	 * Truncate a table.

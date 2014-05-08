@@ -1,6 +1,6 @@
-<?php namespace Codesleeve\Fixture\Repositories;
+<?php namespace Codesleeve\Fixture\Drivers;
 
-interface RepositoryInterface {
+interface DriverInterface {
 
 	/**
 	 * Build a fixture record using the passed in values.
