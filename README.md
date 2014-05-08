@@ -6,12 +6,13 @@
 [![License](https://poser.pugx.org/codesleeve/fixture/license.png)](https://packagist.org/packages/codesleeve/fixture)
 
 A framework agnostic, simple (yet elegant) fixture library for php.
+
 Fixture was created by [Travis Bennett](https://twitter.com/tandrewbennett).
 
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Overview](#overview)
-* [Drivers](#repositories)
+* [Drivers](#drivers)
 * [Setup](#setup)
 * [Examples](#examples)
   * [Standard Driver](#standard-driver)
@@ -176,7 +177,7 @@ class fooTest extends PHPUnit_Framework_TestCase
 ## Drivers
 Fixture currently supports two drivers:
 * Standard Driver - This is the most basic driver avaialble for this package.  It requires no ORM and has no concept of relationships.
-* Eloquent Driver - This driver allows full usage of the Eloquent ORM.  when creating fixture data; eloquent relationships can be used in order to easily manage foreign keys among fixture data.
+* Eloquent Driver - This driver allows full usage of the Eloquent ORM.  When creating fixture data, eloquent relationships can be used in order to easily manage foreign keys among fixture data.
 
 ## Setup
 In order to use fixture, you're going to first need to initialize it.  A good place to do this is inside your bootstrap file (configured via your phpunit.xml), but you're certainly welcome to do this where it makes the most sense for you:
@@ -194,7 +195,7 @@ $config = array(
 );
 
 // Fixture implements a singleton pattern.
-// Create an instance of and set the config and repo.
+// Get an instance of Fixture and set the config and driver.
 $fixture = Fixture::getInstance();
 $fixture->setConfig($config);
 $fixture->setDriver($driver);
@@ -215,7 +216,7 @@ For our examples, let's assume that we have the following bleach-themed system:
 	* A zanpakuto belongs to one soul reaper only.
 	* A rank belongs to many soul reapers.
 	
-### Standard Repository
+### Standard Driver
 #### Step 1 - Fixture setup
 Inside your application test folder, create a folder named fixtures.  Next, create a couple of fixture files inside this folder.  Fixture files are written using native php array syntax.  To create one, simply create a new file named after the table that the fixture corresponds to and have it return an array of data.  As an example of this, let's create some fixture data for our 'soul_reapers' table:
 
