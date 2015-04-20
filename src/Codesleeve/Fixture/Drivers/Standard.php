@@ -42,6 +42,12 @@ class Standard extends BaseDriver implements DriverInterface
 
 		foreach ($records as $recordName => $recordValues)
 		{
+			array_walk($recordValues, function(&$value) use ($recordValues){
+				if (is_callable($value)) {
+					$value = call_user_func($value, $recordValues);
+				}
+			});
+
 			// Generate a hash for this record's primary key.  We'll simply hash the name of the
 			// fixture into an integer value so that related fixtures don't have to rely on
 			// an auto-incremented primary key when creating foreign keys.

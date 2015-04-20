@@ -1,4 +1,4 @@
-<?php  
+<?php
 
 use Codesleeve\Fixture\Fixture;
 use Codesleeve\Fixture\Drivers\Eloquent;
@@ -16,7 +16,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
 
     /**
      * A PDO instance.
-     * 
+     *
      * @var PDO
      */
     protected $db;
@@ -57,6 +57,8 @@ class EloquentTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
         $this->assertEquals('Diablo 3', $this->fixture->games('Diablo3')->title);
+        $this->assertEquals('diablo-3', $this->fixture->games('Diablo3')->slug);
+        $this->assertEquals('skyrim', $this->fixture->games('Skyrim')->slug);
         $this->assertEquals('root', $this->fixture->roles('root')->name);
         $this->assertEquals(2, $userCount);
         $this->assertEquals(2, $roleCount);
@@ -65,7 +67,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Test that the up method will only populate fixtures that 
+	 * Test that the up method will only populate fixtures that
 	 * are supplied to it via parameters.
 	 *
      * @test
@@ -156,7 +158,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         $db->exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT)");
         $db->exec("CREATE TABLE IF NOT EXISTS roles (id INTEGER PRIMARY KEY, name TEXT)");
         $db->exec("CREATE TABLE IF NOT EXISTS roles_users (id INTEGER PRIMARY KEY, role_id INTEGER, user_id INTEGER, active INTEGER DEFAULT 0)");
-        $db->exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT)");
+        $db->exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT, slug TEXT)");
 
         return $db;
     }
@@ -164,7 +166,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
     /**
      * Helper method to return the current record count in each
      * fixture table.
-     * 
+     *
      * @return array
      */
     protected function getRecordCounts()

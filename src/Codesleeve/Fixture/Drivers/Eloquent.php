@@ -11,7 +11,7 @@ class Eloquent extends BaseDriver implements DriverInterface
 {
 	/**
      * A PDO connection instance.
-     * 
+     *
      * @var PDO
      */
     protected $db;
@@ -72,6 +72,10 @@ class Eloquent extends BaseDriver implements DriverInterface
 
 					continue;
 				}
+
+                if (is_callable($columnValue)) {
+                    $columnValue = call_user_func($columnValue, $record, $recordValues);
+                }
 
 				$record->$columnName = $columnValue;
 			}
@@ -184,11 +188,11 @@ class Eloquent extends BaseDriver implements DriverInterface
 		$otherKeyPieces = explode('.', $relation->getOtherKey());
 		$otherKeyName = $otherKeyPieces[1];
 		$otherKeyValue = $this->generateKey($relatedRecordName);
-		
+
 		$fields = "$foreignKeyName, $otherKeyName";
 		$values = array($foreignKeyValue, $otherKeyValue);
-		
-		foreach ($pivotColumns as $pivotColumn) 
+
+		foreach ($pivotColumns as $pivotColumn)
 		{
 			list($columnName, $columnValue) = explode(':', $pivotColumn);
 			$fields .= ", $columnName";

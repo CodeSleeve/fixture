@@ -1,7 +1,7 @@
 <?php namespace Codesleeve\Fixture;
 
 use Codesleeve\Fixture\Drivers\DriverInterface;
-use Faker\Generator; 
+use Faker\Generator;
 
 /**
  * A framework agnostic, simple (yet elegant) fixture library for php.
@@ -71,7 +71,7 @@ class Fixture
     /**
      * Protected constructor to prevent creating a new instance of the
      * *Singleton* via the `new` operator from outside of this class.
-     * 
+     *
      * @return void
      */
     protected function __construct()
@@ -144,7 +144,7 @@ class Fixture
 
 	/**
      * Return all fixtures.
-     * 
+     *
      * @return array
      */
     public function getFixtures()
@@ -154,7 +154,7 @@ class Fixture
 
     /**
      * Set all fixtures.
-     * 
+     *
      * @param array $fixtures
      */
     public function setFixtures(array $fixtures)
@@ -216,7 +216,7 @@ class Fixture
 
     /**
      * Create fake data using Faker.
-     * 
+     *
      * @return mixed
      */
     public static function fake()
@@ -231,7 +231,7 @@ class Fixture
     /**
      * Create an instance of the faker method (if one doesn't already exist)
      * and then hang it on this class as a static property.
-     * 
+     *
      * @return void
      */
     protected static function bootFaker()
@@ -304,9 +304,9 @@ class Fixture
 		$tableName = basename($fixture, '.php');
 		$records = include $fixture;
 
+
 		if (!is_array($records)) {
 			throw new Exceptions\InvalidFixtureDataException("Invalid fixture: $fixture, please ensure this file returns an array of data.", 1);
-			
 		}
 
 		$this->fixtures[$tableName] = $this->driver->buildRecords($tableName, $records);

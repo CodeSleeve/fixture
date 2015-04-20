@@ -1,4 +1,4 @@
-<?php  
+<?php
 
 use Codesleeve\Fixture\Fixture;
 use Codesleeve\Fixture\Drivers\Standard;
@@ -15,7 +15,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
 
     /**
      * A PDO instance.
-     * 
+     *
      * @var PDO
      */
     protected $db;
@@ -56,6 +56,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
         $this->assertEquals('Diablo 3', $this->fixture->games('Diablo3')->title);
+        $this->assertEquals('diablo-3', $this->fixture->games('Diablo3')->slug);
         $this->assertEquals('root', $this->fixture->roles('root')->name);
         $this->assertEquals(1, $userCount);
         $this->assertEquals(1, $roleCount);
@@ -64,7 +65,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Test that the up method will only populate fixtures that 
+	 * Test that the up method will only populate fixtures that
 	 * are supplied to it via parameters.
 	 *
      * @test
@@ -74,7 +75,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
 	{
 		$this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->up(array('users'));
-        
+
         list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
 
         $this->assertEquals('Travis', $this->fixture->users('Travis')->first_name);
@@ -132,7 +133,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
         $db = new PDO('sqlite::memory:');
         $db->exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT)");
         $db->exec("CREATE TABLE IF NOT EXISTS roles (id INTEGER PRIMARY KEY, name TEXT)");
-        $db->exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT)");
+        $db->exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT, slug TEXT)");
 
         return $db;
     }
@@ -140,7 +141,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
     /**
      * Helper method to return the current record count in each
      * fixture table.
-     * 
+     *
      * @return array
      */
     protected function getRecordCounts()
