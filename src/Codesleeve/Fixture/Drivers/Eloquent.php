@@ -1,5 +1,6 @@
 <?php namespace Codesleeve\Fixture\Drivers;
 
+use Codesleeve\Fixture\KeyGenerators\KeyGeneratorInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
@@ -7,22 +8,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use PDO;
 
-class Eloquent extends BaseDriver implements DriverInterface
+class Eloquent extends PDODriver implements DriverInterface
 {
-	/**
-     * A PDO connection instance.
-     * 
-     * @var PDO
-     */
-    protected $db;
-
-    /**
-	 * An array of tables that have had fixture data loaded into them.
-	 *
-	 * @var array
-	 */
-	protected $tables = array();
-
     /**
      * An instance of Laravel's Str class.
      *
@@ -34,12 +21,13 @@ class Eloquent extends BaseDriver implements DriverInterface
 	 * Constructor method
 	 *
 	 * @param  DatabaseManager $db
-	 * @param  Str $str
+	 * @param  KeyGeneratorInterface $keyGenerator
 	 */
-	public function __construct(PDO $db, Str $str)
+	public function __construct(PDO $pdo, KeyGeneratorInterface $keyGenerator = null)
 	{
-		$this->db = $db;
-		$this->str = $str;
+		$this->str = new Str();
+
+		parent::__construct($pdo, $keyGenerator);
 	}
 
 	/**
@@ -184,11 +172,11 @@ class Eloquent extends BaseDriver implements DriverInterface
 		$otherKeyPieces = explode('.', $relation->getOtherKey());
 		$otherKeyName = $otherKeyPieces[1];
 		$otherKeyValue = $this->generateKey($relatedRecordName);
-		
+
 		$fields = "$foreignKeyName, $otherKeyName";
 		$values = array($foreignKeyValue, $otherKeyValue);
-		
-		foreach ($pivotColumns as $pivotColumn) 
+
+		foreach ($pivotColumns as $pivotColumn)
 		{
 			list($columnName, $columnValue) = explode(':', $pivotColumn);
 			$fields .= ", $columnName";

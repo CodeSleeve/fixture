@@ -1,8 +1,8 @@
 #Fixture
 [![Build Status](https://travis-ci.org/CodeSleeve/fixture.png?branch=development)](https://travis-ci.org/CodeSleeve/fixture)
-[![Latest Stable Version](https://poser.pugx.org/codesleeve/fixture/v/stable.png)](https://packagist.org/packages/codesleeve/fixture) 
-[![Total Downloads](https://poser.pugx.org/codesleeve/fixture/downloads.png)](https://packagist.org/packages/codesleeve/fixture) 
-[![Latest Unstable Version](https://poser.pugx.org/codesleeve/fixture/v/unstable.png)](https://packagist.org/packages/codesleeve/fixture) 
+[![Latest Stable Version](https://poser.pugx.org/codesleeve/fixture/v/stable.png)](https://packagist.org/packages/codesleeve/fixture)
+[![Total Downloads](https://poser.pugx.org/codesleeve/fixture/downloads.png)](https://packagist.org/packages/codesleeve/fixture)
+[![Latest Unstable Version](https://poser.pugx.org/codesleeve/fixture/v/unstable.png)](https://packagist.org/packages/codesleeve/fixture)
 [![License](https://poser.pugx.org/codesleeve/fixture/license.png)](https://packagist.org/packages/codesleeve/fixture)
 
 A framework agnostic, simple (yet elegant) fixture library for php.
@@ -49,67 +49,67 @@ class fooTest extends PHPUnit_Framework_TestCase
      * @var PDO
      */
 	protected $db;
-	
+
 	/**
 	 * Initialize our test state.
 	 *
 	 * @return void
 	 */
-	public function setUp() 
+	public function setUp()
 	{
 		// create a pdo instance
 		if (!$this->db) {
 			$this->db = new PDO('sqlite::memory:');
 		}
-		
+
 		// populate the users table
 		$sql = 'INSERT INTO users (email, password, status, created_at, updated_at) values (?, ?, ?, ?, ?)';
 		$sth = $this->prepare($sql);
 		$sth->execute(array('john@doe.com', 'abc12345$%^', 1, date('Y-m-d'), date('Y-m-d')));
-		
+
 		$sql = 'INSERT INTO users (email, password, status, created_at, updated_at) values (?, ?, ?, ?, ?)';
 		$sth = $this->prepare($sql);
 		$sth->execute(array('Jane', 'Doe', 'jane@doe.com', 1, 'abc12345$%^', date('Y-m-d'), date('Y-m-d')));
-		
+
 		$sql = 'INSERT INTO users (email, password, status, created_at, updated_at) values (?, ?, ?, ?, ?)';
 		$sth = $this->prepare($sql);
 		$sth->execute(array('Jim', 'Doe', 'jim@doe.com', 0, 'abc12345$%^', date('Y-m-d'), date('Y-m-d')));
-		
+
 		// populate the roles table
 		$sql = 'INSERT INTO roles (name, created_at, updated_at) values (?, ?, ?)';
 		$sth = $this->prepare($sql);
 		$sth->execute(array('admin', date('Y-m-d'), date('Y-m-d')));
-		
+
 		$sql = 'INSERT INTO roles (name, created_at, updated_at) values (?, ?, ?)';
 		$sth = $this->prepare($sql);
 		$sth->execute(array('user', date('Y-m-d'), date('Y-m-d')));
-		
+
 		// populate the roles_users table
 		$sql = 'INSERT INTO roles_users (role_id, user_id) values (?, ?)';
 		$sth = $this->prepare($sql);
 		$sth->execute(array(1, 1));
-		
+
 		$sql = 'INSERT INTO roles_users (role_id, user_id) values (?, ?)';
 		$sth = $this->prepare($sql);
 		$sth->execute(array(1, 2));
-		
+
 		$sql = 'INSERT INTO roles_users (role_id, user_id) values (?, ?)';
 		$sth = $this->prepare($sql);
 		$sth->execute(array(2, 3));
 	}
-	
+
 	/**
 	 * Reset our test state.
 	 *
 	 * @return void
 	 */
-	public function tearDown 
+	public function tearDown
 	{
 		$this->db->query("TRUNCATE TABLE users");
 		$this->db->query("TRUNCATE TABLE roles");
 		$this->db->query("TRUNCATE TABLE roles_users");
 	}
-	
+
 	/**
 	 * A database integration test of some sort.
 	 *
@@ -129,38 +129,38 @@ into this:
 class fooTest extends PHPUnit_Framework_TestCase
 {
 	use Codesleeve\Fixture\Fixture;
-	
+
 	/**
      * The fixture instance.
      *
      * @var Fixture
      */
 	protected $fixture;
-	
+
 	/**
 	 * Initialize our test state.
 	 *
 	 * @return void
 	 */
-	public function setUp() 
+	public function setUp()
 	{
 		// set the fixture instance
 		$this->fixture = Fixture::getInstance();
-		
+
 		// populate our tables
 		$this->fixture->up();
 	}
-	
+
 	/**
 	 * Reset our test state.
 	 *
 	 * @return void
 	 */
-	public function tearDown 
+	public function tearDown
 	{
 		$this->fixture->down();
 	}
-	
+
 	/**
 	 * A database integration test of some sort.
 	 *
@@ -206,16 +206,16 @@ $fixture = Fixture::getInstance($config, $driver);
 
 ## Examples
 For our examples, let's assume that we have the following bleach-themed system:
-* Tables: 
+* Tables:
 	* soul_reapers
 	* zanpakutos
 	* ranks
 	* ranks_soul_reapers (columns: integer rank_id, integer soul_reaper_id, integer status).
-* Relationships: 
+* Relationships:
 	* A soul reaper has one zanpakuto, belongs to many ranks (many to many).
 	* A zanpakuto belongs to one soul reaper only.
 	* A rank belongs to many soul reapers.
-	
+
 ### Standard Driver
 #### Step 1 - Fixture setup
 Inside your application test folder, create a folder named fixtures.  Next, create a couple of fixture files inside this folder.  Fixture files are written using native php array syntax.  To create one, simply create a new file named after the table that the fixture corresponds to and have it return an array of data.  As an example of this, let's create some fixture data for our 'soul_reapers' table:
@@ -225,11 +225,11 @@ in tests/fixtures/soul_reapers.php
 return array (
 	'Ichigo' => array (
 		'first_name' => 'Ichigo',
-		'last_name'  => 'Kurosaki'		
+		'last_name'  => 'Kurosaki'
 	),
 	'Renji' => array (
 		'first_name' => 'Renji',
-		'last_name'  => 'Abarai'		
+		'last_name'  => 'Abarai'
 	),
 	'Genryusai' => array(
 		'first_name' => 'Genryusai',
@@ -302,7 +302,7 @@ return array (
 );
 ```
 
-Notice that we have both a 'CommanderYammamoto' and a 'CaptainYammamoto' entry inside our ranks_soul_reapers join table; That's because Genryusai Yammamoto was the Captain Commander (he had both the commander role and was also captain level as well) of the Gotei 13. 
+Notice that we have both a 'CommanderYammamoto' and a 'CaptainYammamoto' entry inside our ranks_soul_reapers join table; That's because Genryusai Yammamoto was the Captain Commander (he had both the commander role and was also captain level as well) of the Gotei 13.
 
 #### Step 2 - Initialize an instance of the fixture class.
 Now that the fixture files have been created, the next step is to create an instance of the fixture library inside of our tests.  Consider the following test (we're using PHPUnit here, but the testing framework doesn't matter; SimpleTest would work just as well):
@@ -312,34 +312,34 @@ in tests/exampleTest.php
 
 	use Codesleeve\Fixture\Fixture;
     use Codesleeve\Fixture\Drivers\Standard as StandardDriver;
-	
+
 	/**
      * The fixture instance.
      *
      * @var Fixture
      */
 	protected $fixture;
-	
+
 	/**
 	 * Initialize our test state.
 	 *
 	 * @return void
 	 */
-	public function setUp() 
+	public function setUp()
 	{
 		// set the fixture instance
 		$this->fixture = Fixture::getInstance();
-		
+
 		// populate our tables
 		$this->fixture->up();
 	}
-	
+
 	/**
 	 * Reset our test state.
 	 *
 	 * @return void
 	 */
-	public function tearDown 
+	public function tearDown
 	{
 		$this->fixture->down();
 	}
@@ -362,23 +362,23 @@ echo $this->fixture->soul_reapers('Ichigo')->last_name;
 #### Step 1 - Model setup
 Inside your models folder (or wherever you currently store your models at), create both a SoulReaper and a Zanpakuto model:
 ```php
-	class SoulReaper extends Eloquent 
+	class SoulReaper extends Eloquent
 	{
 		protected $table = 'soul_reapers';
-		
+
 		/**
 	     * A soul reaper has one zanpakuto.
-	     * 
+	     *
 	     * @return hasOne
 	     */
 	    public function zanpakuto()
 	    {
 	       return $this->hasOne('Zanpakuto');
 	    }
-	    
+
 	    /**
 	     * A soul reaper belongs to many ranks.
-	     * 
+	     *
 	     * @return belongsToMany
 	     */
 	    public function ranks()
@@ -386,14 +386,14 @@ Inside your models folder (or wherever you currently store your models at), crea
 	       return $this->belongsToMany('ranks');
 	    }
 	}
-	
-	class Zanpakuto extends Eloquent 
+
+	class Zanpakuto extends Eloquent
 	{
 		protected $table = 'zanpakutos';
-		
+
 		/**
 	     * A zanpakuto belongs to a Soul Reaper.
-	     * 
+	     *
 	     * @return belongsTo
 	     */
 	    public function soulReaper()
@@ -412,12 +412,12 @@ return array (
 	'Ichigo' => array (
 		'first_name' => 'Ichigo',
 		'last_name'  => 'Kurosaki',
-		'ranks' => array('Substitute|active:1')		
+		'ranks' => array('Substitute|active:1')
 	),
 	'Renji' => array (
 		'first_name' => 'Renji',
 		'last_name'  => 'Abarai',
-		'ranks' => array('Lieutenant|active:1')		
+		'ranks' => array('Lieutenant|active:1')
 	),
 	'Genryusai' => array(
 		'first_name' => 'Genryusai',
@@ -474,19 +474,19 @@ Because we know that a Zanpakto has a 'belongsTo' relationship with a SoulReaper
 	'soulReaper' => 'Ichigo',
 	'name' => 'Zangetsu',
 ),
- ``` 
+ ```
 
 Many to many (N to N) join table relationships can also be populated. In our running example, soul reapers have a many to many (belongsToMany) relationship with ranks.  In essence, a soul reaper can have many ranks and ranks can belong to many soul reapers (notice that Genryusai has both 'Commander' and 'Captain' ranks; that's because Genryusai Yammamoto was the Captain Commander of the Gotei 13).  To represent this, we simply assign an array to a value that's named after the belongsToMany relationship of the fixture's corresponding model.  In our example, from the soul reapers side (of the belongsToMany relationship), we simple pass an array of 'ranks' (since we defined a belongsToMany relationship named 'ranks' inside our SoulReaper model) we want a soul reaper to have.  Extra columns on the join table can be populated using a '|' delimiter with key/values separated with a ':'.
 
 ```php
-// This assigns Genryusai the ranks of Captain and Commander and 
+// This assigns Genryusai the ranks of Captain and Commander and
 // sets the 'active' pivot column to 1 for each rank.
 'Genryusai' => array(
 	'first_name' => 'Genryusai',
 	'last_name'  => 'Yammamoto',
 	'ranks' => array('Captain|active:1', 'Commander|active:1')
 )
-``` 
+```
 
 #### Step 3 - Initialize an instance of the fixture class.
 Now that the fixture files have been created, the next step is to create an instance of the fixture library inside of our tests.  Consider the following test (we're using PHPUnit here, but the testing framework doesn't matter; SimpleTest would work just as well):
@@ -496,36 +496,36 @@ in tests/exampleTest.php
 
 	use Codesleeve\Fixture\Fixture;
     use Codesleeve\Fixture\Drivers\Eloquent as EloquentDriver;
-	
+
 	/**
      * The fixture instance.
      *
      * @var Fixture
      */
 	protected $fixture;
-	
+
 	/**
 	 * Initialize our test state.
 	 *
 	 * @return void
 	 */
-	public function setUp() 
+	public function setUp()
 	{
 		// set the fixture instance
 		$db = new \PDO('sqlite::memory:');
 		$driver = new EloquentDriver($db);
 		$this->fixture = Fixture::getInstance(array('location' => 'path/to/your/fixtures.php'), $driver);
-		
+
 		// populate our tables
 		$this->fixture->up();
 	}
-	
+
 	/**
 	 * Reset our test state.
 	 *
 	 * @return void
 	 */
-	public function tearDown 
+	public function tearDown
 	{
 		$this->fixture->down();
 	}
@@ -541,11 +541,25 @@ Fixture has built in integration with [Faker](https://github.com/fzaninotto/Fake
 	'ranks' => array('Substitute|active:1'),
 	'bio' => Fixture::fake('text'),
 	'age' => Fixture::fake('randomNumber', 15, 18),
-	'address' => Fixture::fake('address')	
+	'address' => Fixture::fake('address')
 ),
 ```
 
 By using fixtures to seed our test database we've gained very precise control over what's in our database at any given time during an integration test.  This in turn allows us to very easily test the pieces of our application that contain database specific logic.
+
+## Key generators
+Fixture can support generating primary keys & relation keys for fixture data with different generators. To use a different key generator then the default SHA1KeyGenerator generator. You just need to pass an instance of that generator to the driver. Both the Eloquent & Standard drivers support it.
+
+```php
+
+use Codesleeve\Fixture\KeyGenerators\Crc32KeyGenerator;
+
+$generator = new Crc32KeyGenerator();
+//$generator = new SHA1KeyGenerator(10);
+
+new EloquentDriver($db, $generator);
+
+```
 
 ## Contributing
 Fixture is always open to contributions from the community, however I ask that you please make all pull request to the development branch only.  Let me reiterate this; I will not be accepting pull requests on master.  
