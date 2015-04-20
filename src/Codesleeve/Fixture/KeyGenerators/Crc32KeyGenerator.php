@@ -12,7 +12,7 @@ class Crc32KeyGenerator implements KeyGeneratorInterface
      */
     public function __construct()
     {
-        define(__NAMESPACE__.'\MAX_ID', 2 ** 30 - 1);
+        define(__NAMESPACE__.'\MAX_ID', pow(2, 30) - 1);
     }
 
     /**
