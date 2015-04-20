@@ -1,8 +1,7 @@
-<?php  
+<?php
 
 use Codesleeve\Fixture\Fixture;
 use Codesleeve\Fixture\Drivers\Eloquent;
-use Illuminate\Support\Str;
 use Mockery as m;
 
 class EloquentTest extends PHPUnit_Framework_TestCase
@@ -16,7 +15,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
 
     /**
      * A PDO instance.
-     * 
+     *
      * @var PDO
      */
     protected $db;
@@ -65,7 +64,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Test that the up method will only populate fixtures that 
+	 * Test that the up method will only populate fixtures that
 	 * are supplied to it via parameters.
 	 *
      * @test
@@ -133,9 +132,8 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         }
 
         $this->db = $this->buildDB();
-        $str = new Str;
         $this->fixture = Fixture::getInstance();
-        $repository = new Eloquent($this->db, $str);
+        $repository = new Eloquent($this->db);
         $this->fixture->setDriver($repository);
 
         // Bootstrap Eloquent
@@ -164,7 +162,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
     /**
      * Helper method to return the current record count in each
      * fixture table.
-     * 
+     *
      * @return array
      */
     protected function getRecordCounts()

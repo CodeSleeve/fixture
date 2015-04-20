@@ -20,14 +20,28 @@ class PDODriver
      */
      protected $tables = array();
 
+    /**
+     * An instance of a key generator
+     *
+     * @var KeyGeneratorInterface
+     */
+     protected $keyGenerator;
+
+
      /**
  	 * Constructor method
  	 *
  	 * @param  DatabaseManager $db
+ 	 * @param  KeyGeneratorInterface $keyGenerator
  	 */
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo, KeyGeneratorInterface $keyGenerator = null)
     {
+        if ($keyGenerator === null) {
+            $keyGenerator = new SHA1KeyGenerator();
+        }
+
         $this->db = $pdo;
+        $this->keyGenerator = $keyGenerator;
     }
     /**
      * Truncate a table.
@@ -50,10 +64,8 @@ class PDODriver
      *
      * @return int
      */
-     protected function generateKey($value)
-     {
-         $hash = sha1($value);
-         $integerHash = base_convert($hash, 16, 10);
-         return (int)substr($integerHash, 0, 10);
-     }
+    protected function generateKey($value)
+    {
+        return $this->keyGenerator->generateKey($value);
+    }
 }
