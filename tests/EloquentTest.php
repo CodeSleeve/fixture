@@ -2,7 +2,6 @@
 
 use Codesleeve\Fixture\Fixture;
 use Codesleeve\Fixture\Drivers\Eloquent;
-use Illuminate\Support\Str;
 use Mockery as m;
 
 class EloquentTest extends PHPUnit_Framework_TestCase
@@ -135,9 +134,8 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         }
 
         $this->db = $this->buildDB();
-        $str = new Str;
         $this->fixture = Fixture::getInstance();
-        $repository = new Eloquent($this->db, $str);
+        $repository = new Eloquent($this->db);
         $this->fixture->setDriver($repository);
 
         // Bootstrap Eloquent
