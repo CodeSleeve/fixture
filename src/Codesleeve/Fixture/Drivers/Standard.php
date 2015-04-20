@@ -2,32 +2,8 @@
 
 use PDO;
 
-class Standard extends BaseDriver implements DriverInterface
+class Standard extends PDODriver implements DriverInterface
 {
-	/**
-     * A PDO connection instance.
-     *
-     * @var PDO
-     */
-    protected $db;
-
-    /**
-	 * An array of tables that have had fixture data loaded into them.
-	 *
-	 * @var array
-	 */
-	protected $tables = array();
-
-	/**
-	 * Constructor method
-	 *
-	 * @param PDO $db
-	 */
-	public function __construct(PDO $db)
-	{
-		$this->db = $db;
-	}
-
 	/**
 	 * Build a fixture record using the passed in values.
 	 *
