@@ -20,13 +20,14 @@ class Eloquent extends PDODriver implements DriverInterface
 	/**
 	 * Constructor method
 	 *
-	 * @param  DatabaseManager $pdo
+	 * @param  DatabaseManager $db
+	 * @param  KeyGeneratorInterface $keyGenerator
 	 */
-	public function __construct(PDO $pdo)
+	public function __construct(PDO $pdo, KeyGeneratorInterface $keyGenerator = null)
 	{
 		$this->str = new Str();
 
-		parent::__construct($pdo);
+		parent::__construct($pdo, $keyGenerator);
 	}
 
 	/**
