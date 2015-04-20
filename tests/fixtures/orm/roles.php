@@ -1,13 +1,11 @@
 <?php
 
-return array (
-	'root' => array(
-		'name' => 'root',
-	),
+return [
+    'root' => [
+        'name' => 'root',
+    ],
 
-	'endUser' => array(
-		'name' => 'endUser'
-	)
-);
-
-?>
+    'endUser' => [
+        'name' => 'endUser'
+    ]
+];
