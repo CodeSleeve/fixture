@@ -30,8 +30,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test that the fixture class is able to generate a single instance
-     * of itself. 
-     * 
+     * of itself.
+     *
      * @test
      * @return void
      */
@@ -72,7 +72,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that an an exception is thrown when trying to access a fixture that 
+     * Test that an an exception is thrown when trying to access a fixture that
      * does not exist
      *
      * @test
@@ -98,7 +98,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
     public function it_should_able_to_generate_fake_fixture_data()
     {
         $word = Fixture::fake('word');
-        $number = Fixture::fake('randomNumber', 1, 1);
+        $number = Fixture::fake('numberBetween', 1, 1);
 
         $this->assertInternalType('string', $word);
         $this->assertEquals(1, $number);
