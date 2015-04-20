@@ -1,9 +1,7 @@
 <?php
 
-return array (
-	'root' => array (
-		'name' => 'root',
-	)
-);
-
-?>
+return [
+    'root' => [
+        'name' => 'root',
+    ]
+];

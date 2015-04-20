@@ -1,7 +1,8 @@
-<?php namespace Codesleeve\Fixture\Exceptions;
+<?php
+namespace Codesleeve\Fixture\Exceptions;
 
 use Exception;
 
-class InvalidFixtureNameException extends Exception {
-
+class InvalidFixtureNameException extends Exception
+{
 }

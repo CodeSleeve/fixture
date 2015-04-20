@@ -36,20 +36,20 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         $this->db->query("DELETE FROM users");
         $this->db->query("DELETE FROM roles");
         $this->db->query("DELETE FROM games");
-        $this->fixture->setFixtures(array());
+        $this->fixture->setFixtures([]);
         m::close();
     }
 
-	/**
-	 * Test that the up method will populate all fixtures when called
-	 * with an empty parameter list.
-	 *
+    /**
+     * Test that the up method will populate all fixtures when called
+     * with an empty parameter list.
+     *
      * @test
-	 * @return void
-	 */
-	public function it_should_populate_all_fixtures()
-	{
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
+     * @return void
+     */
+    public function it_should_populate_all_fixtures()
+    {
+        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/orm']);
         $this->fixture->up();
 
         list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
@@ -63,19 +63,19 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(2, $roleCount);
         $this->assertEquals(2, $gameCount);
         $this->assertCount(3, $this->fixture->getFixtures());
-	}
+    }
 
-	/**
-	 * Test that the up method will only populate fixtures that
-	 * are supplied to it via parameters.
-	 *
+    /**
+     * Test that the up method will only populate fixtures that
+     * are supplied to it via parameters.
+     *
      * @test
-	 * @return void
-	 */
-	public function it_should_populate_only_some_fixtures()
-	{
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
-        $this->fixture->up(array('users'));
+     * @return void
+     */
+    public function it_should_populate_only_some_fixtures()
+    {
+        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/orm']);
+        $this->fixture->up(['users']);
 
         list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
 
@@ -84,7 +84,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $roleCount);
         $this->assertEquals(0, $gameCount);
         $this->assertCount(1, $this->fixture->getFixtures());
-	}
+    }
 
     /**
      * Test that the down method will truncate all current fixture table data
@@ -95,7 +95,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_truncate_all_fixtures()
     {
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
+        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/orm']);
         $this->fixture->up();
         $this->fixture->down();
 
@@ -115,8 +115,8 @@ class EloquentTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_populate_fixture_join_column_data()
     {
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
-        $this->fixture->up(array('users', 'roles'));
+        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/orm']);
+        $this->fixture->up(['users', 'roles']);
 
         $this->assertEquals(1, $this->fixture->users('Travis')->roles[0]->pivot->active);
         $this->assertEquals(0, $this->fixture->users('Travis')->roles[1]->pivot->active);
@@ -140,7 +140,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
 
         // Bootstrap Eloquent
         $sqliteConnection = new Illuminate\Database\SQLiteConnection($this->db);
-        $resolver = new Illuminate\Database\ConnectionResolver(array('sqlite' => $sqliteConnection));
+        $resolver = new Illuminate\Database\ConnectionResolver(['sqlite' => $sqliteConnection]);
         $resolver->setDefaultConnection('sqlite');
         Illuminate\Database\Eloquent\Model::setConnectionResolver($resolver);
     }
@@ -178,6 +178,6 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         $gameQuery = $this->db->query('SELECT COUNT(*) AS count from games');
         $gameCount = $gameQuery->fetchColumn(0);
 
-        return array($userCount, $roleCount, $gameCount);
+        return [$userCount, $roleCount, $gameCount];
     }
 }

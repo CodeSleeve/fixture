@@ -5,7 +5,7 @@ use Mockery as m;
 
 class FixtureTest extends PHPUnit_Framework_TestCase
 {
-	/**
+    /**
      * An instance of the fixture class.
      *
      * @var Fixture
@@ -17,7 +17,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-    	$this->fixture = Fixture::getInstance();
+        $this->fixture = Fixture::getInstance();
     }
 
     /**
@@ -43,21 +43,21 @@ class FixtureTest extends PHPUnit_Framework_TestCase
         $this->assertSame($this->fixture, $fixture);
     }
 
-	/**
-	 * Test that the up method throws an invalid fixture location exception
-	 * for fixture locations that don't exist.
-	 *
+    /**
+     * Test that the up method throws an invalid fixture location exception
+     * for fixture locations that don't exist.
+     *
      * @test
-	 * @expectedException Codesleeve\Fixture\Exceptions\InvalidFixtureLocationException
-	 * @return void
-	 */
-	public function it_should_throw_an_exception_if_the_fixture_path_does_not_exist()
-	{
-        $this->fixture->setConfig(array('location' => ''));
+     * @expectedException Codesleeve\Fixture\Exceptions\InvalidFixtureLocationException
+     * @return void
+     */
+    public function it_should_throw_an_exception_if_the_fixture_path_does_not_exist()
+    {
+        $this->fixture->setConfig(['location' => '']);
         $this->fixture->up();
-	}
+    }
 
-	/**
+    /**
      * Test that that up method throws an invalid fixture error if one of the fixtures
      * is not an array
      *
@@ -67,7 +67,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_throw_an_exception_if_the_fixture_is_not_an_array()
     {
-        $this->fixture->setConfig(array('location' => __DIR__ . '/invalid_fixtures'));
+        $this->fixture->setConfig(['location' => __DIR__ . '/invalid_fixtures']);
         $this->fixture->up();
     }
 
@@ -81,8 +81,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_throw_an_exception_if_the_fixture_name_does_not_exist()
     {
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
-        $this->fixture->setFixtures(array());
+        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/standard']);
+        $this->fixture->setFixtures([]);
 
         $this->fixture->foo();
     }

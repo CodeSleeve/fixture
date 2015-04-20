@@ -1,4 +1,6 @@
-<?php namespace Codesleeve\Fixture\KeyGenerators;
+<?php
+
+namespace Codesleeve\Fixture\KeyGenerators;
 
 /**
  * Generates a key for a given value using the SHA1 hash.

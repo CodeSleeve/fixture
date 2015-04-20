@@ -1,4 +1,6 @@
-<?php namespace Codesleeve\Fixture\Drivers;
+<?php
+
+namespace Codesleeve\Fixture\Drivers;
 
 use Codesleeve\Fixture\KeyGenerators\KeyGeneratorInterface;
 use Codesleeve\Fixture\KeyGenerators\SHA1KeyGenerator;
@@ -18,7 +20,7 @@ class PDODriver
      *
      * @var array
      */
-     protected $tables = array();
+     protected $tables = [];
 
     /**
      * An instance of a key generator
@@ -29,11 +31,11 @@ class PDODriver
 
 
      /**
- 	 * Constructor method
- 	 *
- 	 * @param  DatabaseManager $db
- 	 * @param  KeyGeneratorInterface $keyGenerator
- 	 */
+     * Constructor method
+     *
+     * @param  DatabaseManager $db
+     * @param  KeyGeneratorInterface $keyGenerator
+     */
     public function __construct(PDO $pdo, KeyGeneratorInterface $keyGenerator = null)
     {
         if ($keyGenerator === null) {
@@ -52,7 +54,7 @@ class PDODriver
             $this->db->query("DELETE FROM $table");
         }
 
-        $this->tables = array();
+        $this->tables = [];
     }
 
     /**

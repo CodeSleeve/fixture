@@ -5,7 +5,7 @@ use Codesleeve\Fixture\KeyGenerators\Crc32KeyGenerator;
 class Crc32KeyGeneratorTest extends PHPUnit_Framework_TestCase
 {
     public function testReturnsValidKey()
-	{
+    {
         $generator = new Crc32KeyGenerator();
 
         $key = $generator->generateKey('foo');

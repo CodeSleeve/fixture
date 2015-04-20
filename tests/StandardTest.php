@@ -36,20 +36,20 @@ class StandardTest extends PHPUnit_Framework_TestCase
         $this->db->query("DELETE FROM users");
         $this->db->query("DELETE FROM roles");
         $this->db->query("DELETE FROM games");
-        $this->fixture->setFixtures(array());
+        $this->fixture->setFixtures([]);
         m::close();
     }
 
-	/**
-	 * Test that the up method will populate all fixtures when called
-	 * with an empty parameter list.
-	 *
+    /**
+     * Test that the up method will populate all fixtures when called
+     * with an empty parameter list.
+     *
      * @test
-	 * @return void
-	 */
-	public function it_should_populate_all_fixtures()
-	{
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
+     * @return void
+     */
+    public function it_should_populate_all_fixtures()
+    {
+        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/standard']);
         $this->fixture->up();
 
         list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
@@ -62,19 +62,19 @@ class StandardTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $roleCount);
         $this->assertEquals(1, $gameCount);
         $this->assertCount(3, $this->fixture->getFixtures());
-	}
+    }
 
-	/**
-	 * Test that the up method will only populate fixtures that
-	 * are supplied to it via parameters.
-	 *
+    /**
+     * Test that the up method will only populate fixtures that
+     * are supplied to it via parameters.
+     *
      * @test
-	 * @return void
-	 */
-	public function it_should_populate_only_some_fixtures()
-	{
-		$this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
-        $this->fixture->up(array('users'));
+     * @return void
+     */
+    public function it_should_populate_only_some_fixtures()
+    {
+        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/standard']);
+        $this->fixture->up(['users']);
 
         list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
 
@@ -83,7 +83,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $roleCount);
         $this->assertEquals(0, $gameCount);
         $this->assertCount(1, $this->fixture->getFixtures());
-	}
+    }
 
     /**
      * Test that the down method will truncate all current fixture table data
@@ -94,7 +94,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
      */
     public function it_should_truncate_all_fixtures()
     {
-        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
+        $this->fixture->setConfig(['location' => __DIR__ . '/fixtures/standard']);
         $this->fixture->up();
         $this->fixture->down();
 
@@ -155,6 +155,6 @@ class StandardTest extends PHPUnit_Framework_TestCase
         $gameQuery = $this->db->query('SELECT COUNT(*) AS count from games');
         $gameCount = $gameQuery->fetchColumn(0);
 
-        return array($userCount, $roleCount, $gameCount);
+        return [$userCount, $roleCount, $gameCount];
     }
 }

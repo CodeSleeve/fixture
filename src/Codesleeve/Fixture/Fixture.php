@@ -1,4 +1,6 @@
-<?php namespace Codesleeve\Fixture;
+<?php
+
+namespace Codesleeve\Fixture;
 
 use Codesleeve\Fixture\Drivers\DriverInterface;
 use Faker\Generator;
@@ -13,21 +15,21 @@ use Faker\Generator;
  */
 class Fixture
 {
-	/**
-	 * An array of eloquent collections (one for each loaded fixture).
-	 *
-	 * @var array
-	 */
-	protected $fixtures;
+    /**
+     * An array of eloquent collections (one for each loaded fixture).
+     *
+     * @var array
+     */
+    protected $fixtures;
 
-	/**
+    /**
      * An array of configuration options.
      *
      * @var Array
      */
     protected $config;
 
-	/**
+    /**
      * The ORM specific database driver that's being used.
      *
      * @var Driver
@@ -49,7 +51,7 @@ class Fixture
      * @param  DriverInterface $driver
      * @return Singleton The *Singleton* instance.
      */
-    public static function getInstance(array $config = array(), DriverInterface $driver = null)
+    public static function getInstance(array $config = [], DriverInterface $driver = null)
     {
         static $instance = null;
 
@@ -58,11 +60,11 @@ class Fixture
         }
 
         if ($config) {
-        	$instance->config = $config;
+            $instance->config = $config;
         }
 
         if ($driver) {
-        	$instance->driver = $driver;
+            $instance->driver = $driver;
         }
 
         return $instance;
@@ -98,58 +100,58 @@ class Fixture
     {
     }
 
-	/**
-	 * Setter method for the configuration array used by
-	 * the fixture.
-	 *
-	 * @param Array $configArray
-	 */
-	public function setConfig($configArray)
-	{
-		$this->config = $configArray;
-	}
+    /**
+     * Setter method for the configuration array used by
+     * the fixture.
+     *
+     * @param Array $configArray
+     */
+    public function setConfig($configArray)
+    {
+        $this->config = $configArray;
+    }
 
-	/**
-	 * Getter method for the configuration array used by
-	 * the fixture.
-	 *
-	 * @return array
-	 */
-	public function getConfig()
-	{
-		return $this->config;
-	}
+    /**
+     * Getter method for the configuration array used by
+     * the fixture.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
 
-	/**
-	 * Setter method for the driver instance used by
-	 * the fixture.
-	 *
-	 * @param Drivers\DriverInterface $driver
-	 */
-	public function setDriver(Drivers\DriverInterface $driver)
-	{
-		$this->driver = $driver;
-	}
+    /**
+     * Setter method for the driver instance used by
+     * the fixture.
+     *
+     * @param Drivers\DriverInterface $driver
+     */
+    public function setDriver(Drivers\DriverInterface $driver)
+    {
+        $this->driver = $driver;
+    }
 
-	/**
-	 * Getter method for the driver instance used by
-	 * the fixture.
-	 *
-	 * @return Drivers\DriverInterface
-	 */
-	public function getDriver()
-	{
-		return $this->driver;
-	}
+    /**
+     * Getter method for the driver instance used by
+     * the fixture.
+     *
+     * @return Drivers\DriverInterface
+     */
+    public function getDriver()
+    {
+        return $this->driver;
+    }
 
-	/**
+    /**
      * Return all fixtures.
      *
      * @return array
      */
     public function getFixtures()
     {
-    	return $this->fixtures;
+        return $this->fixtures;
     }
 
     /**
@@ -159,7 +161,7 @@ class Fixture
      */
     public function setFixtures(array $fixtures)
     {
-    	$this->fixtures = $fixtures;
+        $this->fixtures = $fixtures;
     }
 
     /**
@@ -173,46 +175,46 @@ class Fixture
     public function __call($name, $arguments)
     {
         if (!array_key_exists($name, $this->fixtures)) {
-        	throw new Exceptions\InvalidFixtureNameException("Fixture: $name does not exist", 1);
+            throw new Exceptions\InvalidFixtureNameException("Fixture: $name does not exist", 1);
         }
 
         $fixture = $this->fixtures[$name];
 
         if ($arguments && array_key_exists($arguments[0], $fixture)) {
-        	return $fixture[$arguments[0]];
+            return $fixture[$arguments[0]];
         }
 
         return $fixture;
     }
 
     /**
-	 * Build fixtures.
-	 *
-	 * @param  array $fixtures
+     * Build fixtures.
+     *
+     * @param  array $fixtures
      * @throws Exceptions\InvalidFixtureLocationException
-	 * @return void
-	 */
-	public function up($fixtures = array())
-	{
-		$location = $this->config['location'];
+     * @return void
+     */
+    public function up($fixtures = [])
+    {
+        $location = $this->config['location'];
 
-		if (!is_dir($location)) {
-			throw new Exceptions\InvalidFixtureLocationException("Could not find fixtures folder, please make sure $location exists", 1);
-		}
+        if (!is_dir($location)) {
+            throw new Exceptions\InvalidFixtureLocationException("Could not find fixtures folder, please make sure $location exists", 1);
+        }
 
-		$this->loadFixtures($fixtures);
-	}
+        $this->loadFixtures($fixtures);
+    }
 
-	/**
-	 * Destroy fixtures.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		$this->driver->truncate();
-        $this->fixtures = array();
-	}
+    /**
+     * Destroy fixtures.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        $this->driver->truncate();
+        $this->fixtures = [];
+    }
 
     /**
      * Create fake data using Faker.
@@ -221,11 +223,11 @@ class Fixture
      */
     public static function fake()
     {
-    	static::bootFaker();
-    	$params = func_get_args();
-    	$method = array_shift($params);
+        static::bootFaker();
+        $params = func_get_args();
+        $method = array_shift($params);
 
-    	return call_user_func_array(array(static::$faker, $method), $params);
+        return call_user_func_array([static::$faker, $method], $params);
     }
 
     /**
@@ -236,79 +238,77 @@ class Fixture
      */
     protected static function bootFaker()
     {
-    	static::$faker = static::$faker ?: \Faker\Factory::create();
+        static::$faker = static::$faker ?: \Faker\Factory::create();
     }
 
-	/**
-	 * Load fixtures.
-	 *
-	 * @param  array $fixtures
-	 * @return void
-	 */
-	protected function loadFixtures($fixtures)
-	{
-		if ($fixtures)
-		{
-			$this->loadSomeFixtures($fixtures);
+    /**
+     * Load fixtures.
+     *
+     * @param  array $fixtures
+     * @return void
+     */
+    protected function loadFixtures($fixtures)
+    {
+        if ($fixtures) {
+            $this->loadSomeFixtures($fixtures);
 
-			return;
-		}
+            return;
+        }
 
-		$this->loadAllFixtures();
-	}
+        $this->loadAllFixtures();
+    }
 
-	/**
-	 * Load all fixtures from the fixture location.
-	 *
-	 * @return void
-	 */
-	protected function loadAllFixtures()
-	{
-		$fixtures = glob("{$this->config['location']}/*.php");
+    /**
+     * Load all fixtures from the fixture location.
+     *
+     * @return void
+     */
+    protected function loadAllFixtures()
+    {
+        $fixtures = glob("{$this->config['location']}/*.php");
 
-		foreach ($fixtures as $fixture) {
-		    $this->loadFixture($fixture);
-		}
-	}
+        foreach ($fixtures as $fixture) {
+            $this->loadFixture($fixture);
+        }
+    }
 
-	/**
-	 * Load a only a subset of fixtures from the fixtures folder.
-	 *
-	 * @param  array $selectedFixtures
-	 * @return void
-	 */
-	protected function loadSomeFixtures($selectedFixtures)
-	{
-		$fixtures = glob("{$this->config['location']}/*.php");
+    /**
+     * Load a only a subset of fixtures from the fixtures folder.
+     *
+     * @param  array $selectedFixtures
+     * @return void
+     */
+    protected function loadSomeFixtures($selectedFixtures)
+    {
+        $fixtures = glob("{$this->config['location']}/*.php");
 
-		foreach ($fixtures as $fixture)
-		{
-		    $tableName = basename($fixture, '.php');
+        foreach ($fixtures as $fixture) {
+            $tableName = basename($fixture, '.php');
 
-		    if (in_array($tableName, $selectedFixtures)) {
-		    	$this->loadFixture($fixture);
-		    }
-		}
-	}
+            if (in_array($tableName, $selectedFixtures)) {
+                $this->loadFixture($fixture);
+            }
+        }
+    }
 
-	/**
-	 * Load a fixture's data into the database.
-	 * We'll also store it inside the fixtures property for easy
-	 * access as an array element or class property from our tests.
-	 *
-	 * @param  string $fixture
-	 * @return void
-	 */
-	protected function loadFixture($fixture)
-	{
-		$tableName = basename($fixture, '.php');
-		$records = include $fixture;
+    /**
+     * Load a fixture's data into the database.
+     * We'll also store it inside the fixtures property for easy
+     * access as an array element or class property from our tests.
+     *
+     * @param  string $fixture
+     * @return void
+     */
+    protected function loadFixture($fixture)
+    {
+        $tableName = basename($fixture, '.php');
+        $records = include $fixture;
 
 
-		if (!is_array($records)) {
-			throw new Exceptions\InvalidFixtureDataException("Invalid fixture: $fixture, please ensure this file returns an array of data.", 1);
-		}
+        if (!is_array($records)) {
+            throw new Exceptions\InvalidFixtureDataException("Invalid fixture: $fixture, please ensure this file returns an array of data.", 1);
+        }
 
-		$this->fixtures[$tableName] = $this->driver->buildRecords($tableName, $records);
-	}
+        $this->fixtures[$tableName] = $this->driver->buildRecords($tableName, $records);
+    }
 }
