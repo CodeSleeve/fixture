@@ -29,6 +29,6 @@ abstract class BaseDriver
 		$hash = sha1($value);
 		$integerHash = base_convert($hash, 16, 10);
 
-		return (int)substr($integerHash, 0, 10);
+		return (int)substr($integerHash, 0, 8);
 	}
 }
