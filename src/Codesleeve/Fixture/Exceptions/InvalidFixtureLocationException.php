@@ -2,6 +2,7 @@
 
 use Exception;
 
-class InvalidFixtureLocationException extends Exception {
+class InvalidFixtureLocationException extends Exception
+{
 
 }

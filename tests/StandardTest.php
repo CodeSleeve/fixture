@@ -1,8 +1,9 @@
-<?php  
+<?php namespace Codesleeve\Fixture;
 
-use Codesleeve\Fixture\Fixture;
+use PHPUnit_Framework_TestCase;
 use Codesleeve\Fixture\Drivers\Standard;
 use Mockery as m;
+use PDO;
 
 class StandardTest extends PHPUnit_Framework_TestCase
 {
@@ -15,7 +16,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
 
     /**
      * A PDO instance.
-     * 
+     *
      * @var PDO
      */
     protected $db;
@@ -40,15 +41,15 @@ class StandardTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
-	/**
-	 * Test that the up method will populate all fixtures when called
-	 * with an empty parameter list.
-	 *
+    /**
+     * Test that the up method will populate all fixtures when called
+     * with an empty parameter list.
+     *
      * @test
-	 * @return void
-	 */
-	public function it_should_populate_all_fixtures()
-	{
+     * @return void
+     */
+    public function itShouldPopulateAllFixtures()
+    {
         $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->up();
 
@@ -61,18 +62,18 @@ class StandardTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $roleCount);
         $this->assertEquals(1, $gameCount);
         $this->assertCount(3, $this->fixture->getFixtures());
-	}
+    }
 
-	/**
-	 * Test that the up method will only populate fixtures that 
-	 * are supplied to it via parameters.
-	 *
+    /**
+     * Test that the up method will only populate fixtures that
+     * are supplied to it via parameters.
+     *
      * @test
-	 * @return void
-	 */
-	public function it_should_populate_only_some_fixtures()
-	{
-		$this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
+     * @return void
+     */
+    public function itShouldPopulateOnlySomeFixtures()
+    {
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->up(array('users'));
         
         list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
@@ -82,7 +83,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $roleCount);
         $this->assertEquals(0, $gameCount);
         $this->assertCount(1, $this->fixture->getFixtures());
-	}
+    }
 
     /**
      * Test that the down method will truncate all current fixture table data
@@ -91,7 +92,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
      * @test
      * @return void
      */
-    public function it_should_truncate_all_fixtures()
+    public function itShouldTruncateAllFixtures()
     {
         $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
         $this->fixture->up();
@@ -140,7 +141,7 @@ class StandardTest extends PHPUnit_Framework_TestCase
     /**
      * Helper method to return the current record count in each
      * fixture table.
-     * 
+     *
      * @return array
      */
     protected function getRecordCounts()

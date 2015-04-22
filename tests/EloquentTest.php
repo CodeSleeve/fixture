@@ -1,9 +1,14 @@
-<?php  
+<?php namespace Codesleeve\Fixture;
 
+use PHPUnit_Framework_TestCase;
 use Codesleeve\Fixture\Fixture;
 use Codesleeve\Fixture\Drivers\Eloquent;
 use Illuminate\Support\Str;
+use Illuminate\Database\SQLiteConnection;
+use Illuminate\Database\ConnectionResolver;
+use Illuminate\Database\Eloquent\Model;
 use Mockery as m;
+use PDO;
 
 class EloquentTest extends PHPUnit_Framework_TestCase
 {
@@ -16,7 +21,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
 
     /**
      * A PDO instance.
-     * 
+     *
      * @var PDO
      */
     protected $db;
@@ -41,15 +46,15 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
-	/**
-	 * Test that the up method will populate all fixtures when called
-	 * with an empty parameter list.
-	 *
+    /**
+     * Test that the up method will populate all fixtures when called
+     * with an empty parameter list.
+     *
      * @test
-	 * @return void
-	 */
-	public function it_should_populate_all_fixtures()
-	{
+     * @return void
+     */
+    public function itShouldPopulateAllFixtures()
+    {
         $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
         $this->fixture->up();
 
@@ -62,17 +67,17 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(2, $roleCount);
         $this->assertEquals(2, $gameCount);
         $this->assertCount(3, $this->fixture->getFixtures());
-	}
+    }
 
-	/**
-	 * Test that the up method will only populate fixtures that 
-	 * are supplied to it via parameters.
-	 *
+    /**
+     * Test that the up method will only populate fixtures that
+     * are supplied to it via parameters.
+     *
      * @test
-	 * @return void
-	 */
-	public function it_should_populate_only_some_fixtures()
-	{
+     * @return void
+     */
+    public function itShouldPopulateOnlySomeFixtures()
+    {
         $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
         $this->fixture->up(array('users'));
 
@@ -83,7 +88,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $roleCount);
         $this->assertEquals(0, $gameCount);
         $this->assertCount(1, $this->fixture->getFixtures());
-	}
+    }
 
     /**
      * Test that the down method will truncate all current fixture table data
@@ -92,7 +97,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
      * @test
      * @return void
      */
-    public function it_should_truncate_all_fixtures()
+    public function itShouldTruncateAllFixtures()
     {
         $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
         $this->fixture->up();
@@ -112,7 +117,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
      * @test
      * @return void
      */
-    public function it_should_populate_fixture_join_column_data()
+    public function itShouldPopulateFixtureJoinColumnData()
     {
         $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/orm'));
         $this->fixture->up(array('users', 'roles'));
@@ -139,10 +144,10 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         $this->fixture->setDriver($repository);
 
         // Bootstrap Eloquent
-        $sqliteConnection = new Illuminate\Database\SQLiteConnection($this->db);
-        $resolver = new Illuminate\Database\ConnectionResolver(array('sqlite' => $sqliteConnection));
+        $sqliteConnection = new SQLiteConnection($this->db);
+        $resolver = new ConnectionResolver(array('sqlite' => $sqliteConnection));
         $resolver->setDefaultConnection('sqlite');
-        Illuminate\Database\Eloquent\Model::setConnectionResolver($resolver);
+        Model::setConnectionResolver($resolver);
     }
 
     /**
@@ -155,7 +160,10 @@ class EloquentTest extends PHPUnit_Framework_TestCase
         $db = new PDO('sqlite::memory:');
         $db->exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT)");
         $db->exec("CREATE TABLE IF NOT EXISTS roles (id INTEGER PRIMARY KEY, name TEXT)");
-        $db->exec("CREATE TABLE IF NOT EXISTS roles_users (id INTEGER PRIMARY KEY, role_id INTEGER, user_id INTEGER, active INTEGER DEFAULT 0)");
+        $db->exec(
+            "CREATE TABLE IF NOT EXISTS roles_users"
+            . " (id INTEGER PRIMARY KEY, role_id INTEGER, user_id INTEGER, active INTEGER DEFAULT 0)"
+        );
         $db->exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT)");
 
         return $db;
@@ -164,7 +172,7 @@ class EloquentTest extends PHPUnit_Framework_TestCase
     /**
      * Helper method to return the current record count in each
      * fixture table.
-     * 
+     *
      * @return array
      */
     protected function getRecordCounts()

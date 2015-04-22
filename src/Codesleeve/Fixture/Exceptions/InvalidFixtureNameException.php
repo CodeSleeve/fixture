@@ -2,6 +2,7 @@
 
 use Exception;
 
-class InvalidFixtureNameException extends Exception {
+class InvalidFixtureNameException extends Exception
+{
 
 }
