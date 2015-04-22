@@ -1,9 +1,7 @@
 <?php
 
 return array (
-	'root' => array (
-		'name' => 'root',
-	)
+    'root' => array (
+        'name' => 'root',
+    )
 );
-
-?>
