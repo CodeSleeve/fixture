@@ -1,5 +1,6 @@
 <?php namespace Codesleeve\Fixture\Drivers;
 
+use Codesleeve\Fixture\KeyGenerators\KeyGeneratorInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
@@ -35,9 +36,11 @@ class Eloquent extends BaseDriver implements DriverInterface
      *
      * @param  DatabaseManager $db
      * @param  Str $str
+     * @param KeyGeneratorInterface $keyGenerator
      */
-    public function __construct(PDO $db, Str $str)
+    public function __construct(PDO $db, Str $str, KeyGeneratorInterface $keyGenerator = null)
     {
+        parent::__construct($keyGenerator);
         $this->db = $db;
         $this->str = $str;
     }

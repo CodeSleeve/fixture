@@ -1,5 +1,6 @@
 <?php namespace Codesleeve\Fixture\Drivers;
 
+use Codesleeve\Fixture\KeyGenerators\KeyGeneratorInterface;
 use PDO;
 
 class Standard extends BaseDriver implements DriverInterface
@@ -22,9 +23,11 @@ class Standard extends BaseDriver implements DriverInterface
      * Constructor method
      *
      * @param PDO $db
+     * @param KeyGeneratorInterface $keyGenerator
      */
-    public function __construct(PDO $db)
+    public function __construct(PDO $db, KeyGeneratorInterface $keyGenerator = null)
     {
+        parent::__construct($keyGenerator);
         $this->db = $db;
     }
 
