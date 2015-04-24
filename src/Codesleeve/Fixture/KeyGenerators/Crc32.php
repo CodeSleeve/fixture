@@ -5,12 +5,26 @@
  */
 class Crc32
 {
-
+    /**
+     * @var int $max The maximum supported CRC32 value
+     */
+    private $max;
+    
+    /**
+     * Initialize max key size
+     *
+     * @param int $max
+     */
+    public function __construct($max = PHP_INT_MAX)
+    {
+        $this->max = $max;
+    }
+    
     /**
      * {@inheritdoc}
      */
     public function generateKey($value, $tableName = null)
     {
-        return sprintf('%u', crc32($tableName . $value));
+        return crc32($tableName . $value) % $this->max;
     }
 }
