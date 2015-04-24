@@ -1,7 +1,24 @@
 <?php namespace Codesleeve\Fixture\Drivers;
 
+use Codesleeve\Fixture\KeyGenerators\KeyGeneratorInterface;
+use Codesleeve\Fixture\KeyGenerators\Sha1;
+
 abstract class BaseDriver
 {
+    protected $keyGenerator;
+    
+    /**
+     * Constructor method
+     *
+     * @param KeyGeneratorInterface $keyGenerator
+     */
+    public function __construct(KeyGeneratorInterface $keyGenerator = null)
+    {
+        if (null === $keyGenerator) {
+            $keyGenerator = new Sha1();
+        }
+        $this->keyGenerator = $keyGenerator;
+    }
     /**
      * Truncate a table.
      *
@@ -17,18 +34,13 @@ abstract class BaseDriver
     }
 
     /**
-     * Generate an integer hash of a string.
-     * We'll use this method to convert a fixture's name into the
-     * primary key of it's corresponding database table record.
+     * Generate a key using the provided key generator
      *
-     * @param  string $value - This should be the name of the fixture.
-     * @return integer
+     * @param string $value
+     * @param string $tableName
      */
-    protected function generateKey($value)
+    protected function generateKey($value, $tableName = null)
     {
-        $hash = sha1($value);
-        $integerHash = base_convert($hash, 16, 10);
-
-        return (int)substr($integerHash, 0, 8);
+        return $this->keyGenerator->generateKey($value, $tableName);
     }
 }
