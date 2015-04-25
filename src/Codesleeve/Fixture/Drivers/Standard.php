@@ -41,9 +41,12 @@ class Standard extends BaseDriver implements DriverInterface
         $this->tables[$tableName] = $tableName;
 
         foreach ($records as $recordName => $recordValues) {
-            // Generate a hash for this record's primary key.  We'll simply hash the name of the
-            // fixture into an integer value so that related fixtures don't have to rely on
-            // an auto-incremented primary key when creating foreign keys.
+            array_walk($recordValues, function (&$value) use ($recordValues) {
+                if (is_callable($value)) {
+                    $value = call_user_func($value, $recordValues);
+                }
+            });
+
             $recordValues = $this->setForeignKeys($recordValues);
             $recordValues = array_merge($recordValues, array('id' => $this->generateKey($recordName)));
 

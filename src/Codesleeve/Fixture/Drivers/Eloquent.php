@@ -61,6 +61,10 @@ class Eloquent extends BaseDriver implements DriverInterface
             foreach ($recordValues as $columnName => $columnValue) {
                 $camelKey = camel_case($columnName);
 
+                if (is_callable($columnValue)) {
+                    $columnValue = call_user_func($columnValue, $recordValues);
+                }
+
                 // If a column name exists as a method on the model, we will just assume
                 // it is a relationship and we'll generate the primary key for it and store
                 // it as a foreign key on the model.
