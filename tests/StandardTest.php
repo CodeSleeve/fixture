@@ -105,6 +105,52 @@ class StandardTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $roleCount);
         $this->assertEquals(0, $gameCount);
     }
+    
+    /**
+     * Test that the down method will truncate some fixture table data
+     * and leave some fixtures in the fixtures array.
+     *
+     * @test
+     * @return void
+     */
+    public function itShouldTruncateSomeFixtures()
+    {
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
+        $this->fixture->up();
+        $this->fixture->down(array('games'));
+
+        list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
+
+        $this->assertNotEmpty($this->fixture->getFixtures());
+        $this->assertGreaterThan(0, $userCount);
+        $this->assertGreaterThan(0, $roleCount);
+        $this->assertEquals(0, $gameCount);
+    }
+    
+    /**
+     * Test that the down method will truncate fixtures that were not processed
+     * with a fixture.
+     *
+     * @test
+     * @return void
+     */
+    public function itShouldTruncateEvenIfNotFixtured()
+    {
+        $this->fixture->setConfig(array('location' => __DIR__ . '/fixtures/standard'));
+        $this->assertEmpty($this->fixture->getFixtures());
+
+        $this->db->query("INSERT INTO users (first_name, last_name) VALUES ('first', 'last')");
+        $this->db->query("INSERT INTO roles (name) VALUES ('name')");
+        $this->db->query("INSERT INTO games (user_id, title) VALUES (1, 'title')");
+        
+        $this->fixture->down(array('games'));
+        
+        list($userCount, $roleCount, $gameCount) = $this->getRecordCounts();
+
+        $this->assertEquals(1, $userCount);
+        $this->assertEquals(1, $roleCount);
+        $this->assertEquals(0, $gameCount);
+    }
 
     /**
      * Build a fixture instance.

@@ -192,7 +192,7 @@ class Fixture
      * @throws Exceptions\InvalidFixtureLocationException
      * @return void
      */
-    public function up($fixtures = array())
+    public function up(array $fixtures = array())
     {
         $location = $this->config['location'];
 
@@ -209,12 +209,18 @@ class Fixture
     /**
      * Destroy fixtures.
      *
+     * @param array $fixtures The fixtures to destroy, null for only fixtures
+     * that have been processed in this instance.
      * @return void
      */
-    public function down()
+    public function down(array $fixtures = array())
     {
-        $this->driver->truncate();
-        $this->fixtures = array();
+        if (empty($fixtures)) {
+            $fixtures = array_keys($this->fixtures);
+        }
+        $this->driver->truncate($fixtures);
+
+        $this->fixtures = array_diff_key($this->fixtures, array_flip($fixtures));
     }
 
     /**
@@ -248,59 +254,40 @@ class Fixture
      * @param  array $fixtures
      * @return void
      */
-    protected function loadFixtures($fixtures)
+    protected function loadFixtures(array $fixtures = null)
     {
-        if ($fixtures) {
-            $this->loadSomeFixtures($fixtures);
-
-            return;
-        }
-
-        $this->loadAllFixtures();
-    }
-
-    /**
-     * Load all fixtures from the fixture location.
-     *
-     * @return void
-     */
-    protected function loadAllFixtures()
-    {
-        $fixtures = glob("{$this->config['location']}/*.php");
-
-        foreach ($fixtures as $fixture) {
-            $this->loadFixture($fixture);
+        foreach ($this->fetchFixtures($fixtures) as $fixture) {
+            $this->processFixture($fixture);
         }
     }
-
+    
     /**
-     * Load a only a subset of fixtures from the fixtures folder.
+     * Fetches fixture files names for all or only a subset of fixtures.
      *
-     * @param  array $selectedFixtures
-     * @return void
+     * @param array $fixtures The name of the fixtures to fetch
+     * @return array The fixture file names
      */
-    protected function loadSomeFixtures($selectedFixtures)
+    protected function fetchFixtures(array $fixtures = null)
     {
-        $fixtures = glob("{$this->config['location']}/*.php");
-
-        foreach ($fixtures as $fixture) {
+        $availableFixtures = glob("{$this->config['location']}/*.php");
+        
+        foreach ($availableFixtures as $i => $fixture) {
             $tableName = basename($fixture, '.php');
-
-            if (in_array($tableName, $selectedFixtures)) {
-                $this->loadFixture($fixture);
+            
+            if ($fixtures && !in_array($tableName, $fixtures)) {
+                unset($availableFixtures[$i]);
             }
         }
+        return array_values($availableFixtures);
     }
 
     /**
-     * Load a fixture's data into the database.
-     * We'll also store it inside the fixtures property for easy
-     * access as an array element or class property from our tests.
+     * Process a fixture, adding its data into the database.
      *
      * @param  string $fixture
      * @return void
      */
-    protected function loadFixture($fixture)
+    protected function processFixture($fixture)
     {
         $tableName = basename($fixture, '.php');
         $records = include $fixture;

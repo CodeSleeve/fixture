@@ -12,13 +12,6 @@ class Standard extends BaseDriver implements DriverInterface
     protected $db;
 
     /**
-     * An array of tables that have had fixture data loaded into them.
-     *
-     * @var array
-     */
-    protected $tables = array();
-
-    /**
      * Constructor method
      *
      * @param PDO $db
