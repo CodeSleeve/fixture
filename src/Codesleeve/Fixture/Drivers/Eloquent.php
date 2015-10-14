@@ -47,15 +47,21 @@ class Eloquent extends BaseDriver implements DriverInterface
      *
      * @param  string $tableName
      * @param  array $records
+     * @param  array $config
      * @return array
      */
-    public function buildRecords($tableName, array $records)
+    public function buildRecords($tableName, array $records, array $config)
     {
         $insertedRecords = array();
         $this->tables[$tableName] = $tableName;
 
         foreach ($records as $recordName => $recordValues) {
             $model = $this->generateModelName($tableName);
+
+            // Prefix namespace if comes from configuration.
+            if (isset($config['namespace'])) {
+                $model = sprintf('%s\%s', $config['namespace'], $model);
+            }
             $record = new $model;
 
             foreach ($recordValues as $columnName => $columnValue) {

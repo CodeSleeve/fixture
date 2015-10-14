@@ -33,9 +33,10 @@ class Standard extends BaseDriver implements DriverInterface
      *
      * @param  string $tableName
      * @param  array $records
+     * @param  array $config
      * @return array
      */
-    public function buildRecords($tableName, array $records)
+    public function buildRecords($tableName, array $records, array $config)
     {
         $insertedRecords = array();
         $this->tables[$tableName] = $tableName;
