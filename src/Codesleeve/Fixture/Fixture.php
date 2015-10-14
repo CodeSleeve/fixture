@@ -313,6 +313,6 @@ class Fixture
             
         }
 
-        $this->fixtures[$tableName] = $this->driver->buildRecords($tableName, $records);
+        $this->fixtures[$tableName] = $this->driver->buildRecords($tableName, $records, $this->config);
     }
 }
